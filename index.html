@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOOH Calculator - Lijncom</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background orbs */
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.4;
+            animation: float 25s infinite ease-in-out;
+            z-index: 0;
+        }
+
+        body::before {
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, #e30613 0%, #ff6b9d 100%);
+            top: -350px;
+            right: -250px;
+        }
+
+        body::after {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, #667eea 0%, #764ba2 100%);
+            bottom: -300px;
+            left: -200px;
+            animation-delay: -12s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) translateX(0px) scale(1); }
+            33% { transform: translateY(-40px) translateX(40px) scale(1.05); }
+            66% { transform: translateY(20px) translateX(-30px) scale(0.95); }
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(30px);
+            border-radius: 32px;
+            box-shadow: 0 30px 90px rgba(227, 6, 19, 0.4), 0 0 1px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            background: linear-gradient(135deg, rgba(227, 6, 19, 0.08) 0%, rgba(255, 107, 157, 0.08) 100%);
+            padding: 70px 50px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #e30613 0%, #ff6b9d 30%, #667eea 60%, #764ba2 100%);
+            background-size: 300% 100%;
+            animation: shimmer 4s infinite linear;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -300% 0; }
+            100% { background-position: 300% 0; }
+        }
+
+        .header h1 {
+            font-size: 52px;
+            margin-bottom: 16px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #e30613 0%, #ff6b9d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -2px;
+            text-shadow: 0 4px 20px rgba(227, 6, 19, 0.2);
+        }
+
+        .header p {
+            font-size: 20px;
+            color: #4a5568;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 50px 50px;
+            max-width: 100%;
+        }
+
+        .section {
+            margin-bottom: 45px;
+            padding: 40px;
+            background: white;
+            border-radius: 24px;
+            border: 2px solid rgba(227, 6, 19, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08), 0 0 1px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, #e30613 0%, #ff6b9d 50%, #667eea 100%);
+            border-radius: 24px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .section:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 60px rgba(227, 6, 19, 0.25), 0 0 1px rgba(0,0,0,0.1);
+        }
+
+        .section:hover::before {
+            opacity: 0.15;
+        }
+
+        .section-title {
+            font-size: 28px;
+            color: #e30613;
+            margin-bottom: 32px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            letter-spacing: -0.5px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 5px;
+            height: 32px;
+            background: linear-gradient(180deg, #e30613 0%, #ff6b9d 100%);
+            border-radius: 3px;
+            box-shadow: 0 4px 12px rgba(227, 6, 19, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 26px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: #1a202c;
+            font-size: 15px;
+            letter-spacing: 0.3px;
+        }
+
+        label .required {
+            color: #e30613;
+            margin-left: 2px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #fafafa;
+            font-family: inherit;
+            color: #1a202c;
+            font-weight: 500;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #e30613;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(227, 6, 19, 0.1), 0 4px 12px rgba(227, 6, 19, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Validation states */
+        input.invalid,
+        select.invalid {
+            border-color: #e30613;
+            background: rgba(227, 6, 19, 0.03);
+            animation: shake 0.5s;
+        }
+
+        input.valid,
+        select.valid {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.03);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        input::placeholder {
+            color: #a0aec0;
+            font-weight: 400;
+        }
+
+        select {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg width='14' height='9' viewBox='0 0 14 9' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L7 7.5L13 1.5' stroke='%23e30613' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+            padding-right: 50px;
+            appearance: none;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 18px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            padding: 16px 26px;
+            background: #fafafa;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex: 1;
+            min-width: 200px;
+            font-weight: 600;
+        }
+
+        .radio-option:hover {
+            border-color: #e30613;
+            background: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(227, 6, 19, 0.2);
+        }
+
+        .radio-option:has(input:checked) {
+            border-color: #e30613;
+            background: linear-gradient(135deg, rgba(227, 6, 19, 0.08) 0%, rgba(255, 107, 157, 0.08) 100%);
+            box-shadow: 0 4px 16px rgba(227, 6, 19, 0.2);
+        }
+
+        .radio-option input[type="radio"] {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            accent-color: #e30613;
+        }
+
+        .radio-option input[type="radio"]:checked + span {
+            color: #e30613;
+            font-weight: 700;
+        }
+
+        .waves-container {
+            margin-top: 28px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 24px;
+        }
+
+        .wave-card {
+            background: white;
+            padding: 32px;
+            border-radius: 20px;
+            border: 2px solid #e2e8f0;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .wave-card::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, #e30613 0%, #ff6b9d 50%, #667eea 100%);
+            border-radius: 20px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .wave-card:hover::before {
+            opacity: 0.4;
+        }
+
+        .wave-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 16px 50px rgba(227, 6, 19, 0.25);
+        }
+
+        .wave-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid rgba(227, 6, 19, 0.1);
+        }
+
+        .wave-title {
+            font-weight: 800;
+            color: #e30613;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .wave-title::before {
+            content: '🌊';
+            font-size: 26px;
+        }
+
+        .remove-wave {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+            color: #dc2626;
+            border: 2px solid rgba(220, 38, 38, 0.3);
+            padding: 10px 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .remove-wave:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
+        }
+
+        .wave-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .wave-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .add-wave-btn {
+            background: linear-gradient(135deg, rgba(227, 6, 19, 0.08) 0%, rgba(255, 107, 157, 0.08) 100%);
+            color: #e30613;
+            border: 2px solid #e30613;
+            padding: 18px 36px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 17px;
+            font-weight: 800;
+            width: 100%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            letter-spacing: 0.3px;
+            box-shadow: 0 4px 16px rgba(227, 6, 19, 0.15);
+        }
+
+        .add-wave-btn::before {
+            content: '➕';
+            font-size: 20px;
+        }
+
+        .add-wave-btn:hover {
+            background: linear-gradient(135deg, #e30613 0%, #ff6b9d 100%);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(227, 6, 19, 0.4);
+        }
+
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 24px;
+            padding: 20px 24px;
+            background: #fafafa;
+            border-radius: 14px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+
+        .toggle-switch:hover {
+            border-color: #e30613;
+            background: white;
+            box-shadow: 0 6px 20px rgba(227, 6, 19, 0.12);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 32px;
+            flex-shrink: 0;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #cbd5e0 0%, #a0aec0 100%);
+            transition: .4s;
+            border-radius: 32px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 4px;
+            bottom: 4px;
+            background: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+        }
+
+        input:checked + .slider {
+            background: linear-gradient(135deg, #e30613 0%, #ff6b9d 100%);
+            box-shadow: 0 0 16px rgba(227, 6, 19, 0.4);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(28px);
+        }
+
+        .toggle-switch span {
+            font-weight: 600;
+            color: #1a202c;
+            font-size: 15px;
+        }
+
+        .calculate-btn {
+            background: linear-gradient(135deg, #e30613 0%, #ff6b9d 100%);
+            color: white;
+            border: none;
+            padding: 24px 48px;
+            border-radius: 18px;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: 900;
+            width: 100%;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 50px;
+            box-shadow: 0 12px 40px rgba(227, 6, 19, 0.4);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .calculate-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.6s;
+        }
+
+        .calculate-btn:hover::before {
+            left: 100%;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(227, 6, 19, 0.5);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(-2px) scale(1.01);
+        }
+
+        .results {
+            display: none;
+            margin-top: 50px;
+            padding: 45px;
+            background: white;
+            border-radius: 24px;
+            border: 2px solid rgba(227, 6, 19, 0.1);
+            box-shadow: 0 12px 40px rgba(227, 6, 19, 0.2);
+        }
+
+        .results.show {
+            display: block;
+            animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(40px);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+
+        .result-title {
+            font-size: 38px;
+            background: linear-gradient(135deg, #e30613 0%, #ff6b9d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 40px;
+            font-weight: 900;
+            text-align: center;
+            letter-spacing: -1px;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .result-card {
+            background: #fafafa;
+            padding: 32px;
+            border-radius: 18px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-card::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, #e30613 0%, #ff6b9d 50%, #667eea 100%);
+            border-radius: 18px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .result-card:hover::before {
+            opacity: 0.6;
+        }
+
+        .result-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 20px 60px rgba(227, 6, 19, 0.3);
+            background: white;
+        }
+
+        .result-label {
+            font-size: 12px;
+            color: #718096;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 800;
+        }
+
+        .result-value {
+            font-size: 36px;
+            background: linear-gradient(135deg, #e30613 0%, #ff6b9d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+            letter-spacing: -1.5px;
+        }
+
+        .wave-result {
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 3px solid rgba(227, 6, 19, 0.15);
+        }
+
+        .wave-result-title {
+            font-weight: 800;
+            color: #e30613;
+            margin-bottom: 28px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .wave-result-title::before {
+            content: '🌊';
+            font-size: 28px;
+        }
+
+        .wave-comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .wave-comparison-card {
+            background: white;
+            border-radius: 18px;
+            border: 2px solid #e2e8f0;
+            padding: 28px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wave-comparison-card::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, #e30613 0%, #ff6b9d 100%);
+            border-radius: 18px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .wave-comparison-card:hover::before {
+            opacity: 0.5;
+        }
+
+        .wave-comparison-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 50px rgba(227, 6, 19, 0.3);
+        }
+
+        .wave-comparison-header {
+            font-size: 20px;
+            font-weight: 800;
+            color: #e30613;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 3px solid rgba(227, 6, 19, 0.1);
+            letter-spacing: -0.5px;
+        }
+
+        .wave-comparison-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .wave-comparison-item.total {
+            border-bottom: none;
+            margin-top: 8px;
+            padding-top: 16px;
+            border-top: 2px solid rgba(227, 6, 19, 0.2);
+        }
+
+        .wave-comparison-label {
+            font-size: 13px;
+            color: #718096;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .wave-comparison-value {
+            font-size: 16px;
+            color: #1a202c;
+            font-weight: 700;
+        }
+
+        .wave-comparison-value.highlight {
+            color: #e30613;
+            font-size: 18px;
+        }
+
+        .wave-comparison-item.total .wave-comparison-value {
+            font-size: 22px;
+            background: linear-gradient(135deg, #e30613 0%, #ff6b9d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+        }
+
+        .suggestion-box {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.12) 0%, rgba(245, 158, 11, 0.12) 100%);
+            border-left: 5px solid #f59e0b;
+            padding: 32px;
+            border-radius: 20px;
+            margin-top: 35px;
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2);
+            border: 2px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .suggestion-title {
+            font-weight: 800;
+            color: #b45309;
+            margin-bottom: 24px;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.3px;
+        }
+
+        .suggestion-content {
+            background: white;
+            padding: 28px;
+            border-radius: 16px;
+        }
+
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .scenario-card {
+            background: #fafafa;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .scenario-card.current {
+            border-color: #cbd5e0;
+        }
+
+        .scenario-card.active {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(37, 99, 235, 0.08) 100%);
+            border-color: #3b82f6;
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.2);
+        }
+
+        .scenario-card.better {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.08) 100%);
+            border-color: #10b981;
+        }
+
+        .scenario-card.best {
+            background: linear-gradient(135deg, rgba(227, 6, 19, 0.08) 0%, rgba(255, 107, 157, 0.08) 100%);
+            border-color: #e30613;
+            box-shadow: 0 6px 24px rgba(227, 6, 19, 0.25);
+        }
+
+        .scenario-card.neutral {
+            background: linear-gradient(135deg, rgba(100, 116, 139, 0.06) 0%, rgba(71, 85, 105, 0.06) 100%);
+            border-color: #64748b;
+        }
+
+        .scenario-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+        }
+
+        .scenario-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .scenario-number {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #e30613 0%, #ff6b9d 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .scenario-name {
+            font-weight: 800;
+            font-size: 16px;
+            color: #1a202c;
+            letter-spacing: -0.3px;
+        }
+
+        .scenario-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .scenario-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .scenario-stat.total {
+            border-bottom: none;
+            margin-top: 8px;
+            padding-top: 12px;
+            border-top: 2px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .scenario-stat .stat-label {
+            font-size: 12px;
+            color: #718096;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .scenario-stat .stat-value {
+            font-size: 15px;
+            color: #1a202c;
+            font-weight: 700;
+        }
+
+        .scenario-stat .stat-value.highlight {
+            color: #e30613;
+            font-size: 16px;
+        }
+
+        .scenario-stat.total .stat-value {
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .scenario-saving {
+            margin-top: 12px;
+            padding: 10px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.15) 100%);
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 800;
+            color: #065f46;
+            font-size: 15px;
+        }
+
+        .scenario-saving.best {
+            background: linear-gradient(135deg, rgba(227, 6, 19, 0.15) 0%, rgba(255, 107, 157, 0.15) 100%);
+            color: #991b1b;
+        }
+
+        .scenario-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .scenario-badge.active-badge {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+
+        .scenario-badge.better-badge {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .scenario-badge.best-badge {
+            background: linear-gradient(135deg, #e30613 0%, #ff6b9d 100%);
+            color: white;
+        }
+
+        .scenario-recommendation {
+            margin-top: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(227, 6, 19, 0.08) 0%, rgba(255, 107, 157, 0.08) 100%);
+            border: 2px solid rgba(227, 6, 19, 0.3);
+            border-radius: 12px;
+            font-size: 16px;
+            line-height: 1.7;
+            color: #991b1b;
+            font-weight: 600;
+        }
+
+        .scenario-recommendation strong {
+            font-weight: 900;
+            color: #7f1d1d;
+        }
+
+        .saving-highlight {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 6px 12px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 15px;
+        }
+
+        @media (max-width: 900px) {
+            .scenario-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .error {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(220, 38, 38, 0.12) 100%);
+            color: #991b1b;
+            padding: 20px;
+            border-radius: 14px;
+            border-left: 5px solid #dc2626;
+            margin-bottom: 24px;
+            font-weight: 600;
+            box-shadow: 0 4px 16px rgba(220, 38, 38, 0.15);
+        }
+
+        .footer {
+            background: linear-gradient(135deg, rgba(227, 6, 19, 0.05) 0%, rgba(255, 107, 157, 0.05) 100%);
+            padding: 45px 35px;
+            text-align: center;
+            color: #718096;
+            font-size: 15px;
+            border-top: 2px solid rgba(227, 6, 19, 0.1);
+            margin-top: 70px;
+        }
+
+        .footer a {
+            color: #e30613;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+
+        .footer a:hover {
+            color: #ff6b9d;
+            text-decoration: underline;
+        }
+
+        small {
+            display: block;
+            color: #718096;
+            font-size: 13px;
+            margin-top: 8px;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 1024px) {
+            .waves-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .wave-comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                border-radius: 24px;
+            }
+
+            .header {
+                padding: 50px 30px;
+            }
+
+            .header h1 {
+                font-size: 38px;
+            }
+
+            .content {
+                padding: 35px 30px;
+            }
+
+            .section {
+                padding: 28px;
+            }
+
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .radio-group {
+                flex-direction: column;
+            }
+
+            .radio-option {
+                min-width: 100%;
+            }
+
+            .wave-card {
+                min-height: auto;
+            }
+            
+            .wave-comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✨ DOOH Prijscalculator</h1>
+            <p>Bereken direct en accuraat jouw digitale campagne prijzen</p>
+        </div>
+
+        <div class="content">
+            <!-- Algemene Info -->
+            <div class="section">
+                <h2 class="section-title">Algemene Informatie</h2>
+                
+                <div class="form-group">
+                    <label for="amName">Naam Account Manager *</label>
+                    <input type="text" id="amName" placeholder="Vul hier je naam in" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="clientName">Naam Klant *</label>
+                    <input type="text" id="clientName" placeholder="Vul hier de klantnaam in" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="network">Netwerk *</label>
+                    <select id="network" required>
+                        <option value="antwerpen">DOOH Antwerpen</option>
+                        <option value="kust" disabled>DOOH Kust (Binnenkort beschikbaar)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Berekeningstype -->
+            <div class="section">
+                <h2 class="section-title">Type Berekening</h2>
+                
+                <div class="form-group">
+                    <label>Bereken op basis van:</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="calculationType" value="contacts" checked>
+                            <span>Aantal Contacten</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="calculationType" value="budget">
+                            <span>Budget</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="baseCpm">Basis CPM (€) *</label>
+                    <input type="number" id="baseCpm" value="11.47" step="0.01" min="0" required>
+                    <small style="color: #666; font-size: 13px; display: block; margin-top: 5px;">
+                        Standaard: €11.47 - Pas aan indien nodig voor kortingen
+                    </small>
+                </div>
+            </div>
+
+            <!-- Waves/Campagnes -->
+            <div class="section">
+                <h2 class="section-title">Campagne Waves</h2>
+                
+                <div class="toggle-switch">
+                    <label class="switch">
+                        <input type="checkbox" id="sumVolume">
+                        <span class="slider"></span>
+                    </label>
+                    <span>Volume-index berekenen op som van alle waves</span>
+                </div>
+
+                <div class="waves-container" id="wavesContainer">
+                    <!-- Waves worden hier dynamisch toegevoegd -->
+                </div>
+
+                <button class="add-wave-btn" onclick="addWave()">Wave Toevoegen</button>
+            </div>
+
+            <!-- Bereken Button -->
+            <button class="calculate-btn" onclick="calculate()">Bereken Prijs</button>
+
+            <!-- Results -->
+            <div class="results" id="results">
+                <h2 class="result-title">Resultaten</h2>
+                <div id="resultsContent"></div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2026 Lijncom - DOOH Calculator | <a href="https://lijncom.be" target="_blank" style="color: #2c5aa0;">lijncom.be</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Month indices
+        const monthIndices = {
+            1: 0.75,  // Januari
+            2: 0.85,  // Februari
+            3: 1.00,  // Maart
+            4: 1.00,  // April
+            5: 1.10,  // Mei
+            6: 1.10,  // Juni
+            7: 0.80,  // Juli
+            8: 0.80,  // Augustus
+            9: 1.20,  // September
+            10: 1.10, // Oktober
+            11: 1.10, // November
+            12: 1.20  // December
+        };
+
+        // Volume indices
+        const volumeIndices = [
+            { min: 1, max: 499999, index: 1.10 },
+            { min: 500000, max: 999999, index: 1.00 },
+            { min: 1000000, max: 1999999, index: 0.90 },
+            { min: 2000000, max: 3999999, index: 0.80 },
+            { min: 4000000, max: 5999999, index: 0.70 },
+            { min: 6000000, max: 7999999, index: 0.60 },
+            { min: 8000000, max: Infinity, index: 0.50 }
+        ];
+
+        let waveCounter = 0;
+
+        // Initialize with one wave
+        window.addEventListener('DOMContentLoaded', () => {
+            addWave();
+        });
+
+        function addWave() {
+            waveCounter++;
+            const wavesContainer = document.getElementById('wavesContainer');
+            const calculationType = document.querySelector('input[name="calculationType"]:checked').value;
+            
+            const waveCard = document.createElement('div');
+            waveCard.className = 'wave-card';
+            waveCard.id = `wave-${waveCounter}`;
+            
+            waveCard.innerHTML = `
+                <div class="wave-header">
+                    <div class="wave-title">Wave ${waveCounter}</div>
+                    ${waveCounter > 1 ? `<button class="remove-wave" onclick="removeWave(${waveCounter})">Verwijderen</button>` : ''}
+                </div>
+                <div class="wave-inputs">
+                    <div class="form-group">
+                        <label for="startDate-${waveCounter}">Startdatum *</label>
+                        <input type="date" id="startDate-${waveCounter}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="duration-${waveCounter}">Aantal dagen *</label>
+                        <input type="number" id="duration-${waveCounter}" min="1" placeholder="7" required>
+                    </div>
+                    <div class="form-group" id="contactsGroup-${waveCounter}" style="${calculationType === 'budget' ? 'display:none' : ''}">
+                        <label for="contacts-${waveCounter}">Aantal contacten *</label>
+                        <input type="number" id="contacts-${waveCounter}" min="1" placeholder="1000000" ${calculationType === 'contacts' ? 'required' : ''}>
+                    </div>
+                    <div class="form-group" id="budgetGroup-${waveCounter}" style="${calculationType === 'contacts' ? 'display:none' : ''}">
+                        <label for="budget-${waveCounter}">Budget (€) *</label>
+                        <input type="number" id="budget-${waveCounter}" min="0" step="0.01" placeholder="5000" ${calculationType === 'budget' ? 'required' : ''}>
+                    </div>
+                </div>
+            `;
+            
+            wavesContainer.appendChild(waveCard);
+        }
+
+        function removeWave(waveId) {
+            const waveCard = document.getElementById(`wave-${waveId}`);
+            waveCard.remove();
+        }
+
+        // Update fields when calculation type changes
+        document.querySelectorAll('input[name="calculationType"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const calculationType = e.target.value;
+                const allWaves = document.querySelectorAll('.wave-card');
+                
+                allWaves.forEach(wave => {
+                    const waveId = wave.id.split('-')[1];
+                    const contactsGroup = document.getElementById(`contactsGroup-${waveId}`);
+                    const budgetGroup = document.getElementById(`budgetGroup-${waveId}`);
+                    const contactsInput = document.getElementById(`contacts-${waveId}`);
+                    const budgetInput = document.getElementById(`budget-${waveId}`);
+                    
+                    if (calculationType === 'contacts') {
+                        contactsGroup.style.display = 'block';
+                        budgetGroup.style.display = 'none';
+                        contactsInput.required = true;
+                        budgetInput.required = false;
+                    } else {
+                        contactsGroup.style.display = 'none';
+                        budgetGroup.style.display = 'block';
+                        contactsInput.required = false;
+                        budgetInput.required = true;
+                    }
+                });
+            });
+        });
+
+        function calculatePeriodIndex(startDate, duration) {
+            const start = new Date(startDate);
+            let totalIndex = 0;
+            
+            // Excel logic: campaign starts the day AFTER the start date
+            // So "Start 28 feb, 7 days" means: 1 march through 7 march
+            for (let i = 1; i <= duration; i++) {
+                const currentDate = new Date(start);
+                currentDate.setDate(start.getDate() + i);
+                const month = currentDate.getMonth() + 1;
+                totalIndex += monthIndices[month];
+            }
+            
+            return totalIndex / duration;
+        }
+
+        function getVolumeIndex(contacts) {
+            for (let tier of volumeIndices) {
+                if (contacts >= tier.min && contacts <= tier.max) {
+                    return tier.index;
+                }
+            }
+            return volumeIndices[volumeIndices.length - 1].index;
+        }
+
+        function getNextTier(contacts) {
+            for (let tier of volumeIndices) {
+                if (contacts < tier.min) {
+                    return {
+                        min: tier.min,
+                        index: tier.index,
+                        difference: tier.min - contacts
+                    };
+                }
+            }
+            return null;
+        }
+
+        function calculate() {
+            // Clear previous validation
+            document.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
+            document.querySelectorAll('.valid').forEach(el => el.classList.remove('valid'));
+            
+            // Validation
+            const amName = document.getElementById('amName').value.trim();
+            const clientName = document.getElementById('clientName').value.trim();
+            let hasError = false;
+            
+            if (!amName) {
+                document.getElementById('amName').classList.add('invalid');
+                hasError = true;
+            } else {
+                document.getElementById('amName').classList.add('valid');
+            }
+            
+            if (!clientName) {
+                document.getElementById('clientName').classList.add('invalid');
+                hasError = true;
+            } else {
+                document.getElementById('clientName').classList.add('valid');
+            }
+
+            const baseCpm = parseFloat(document.getElementById('baseCpm').value);
+            if (!baseCpm || baseCpm <= 0) {
+                document.getElementById('baseCpm').classList.add('invalid');
+                hasError = true;
+            } else {
+                document.getElementById('baseCpm').classList.add('valid');
+            }
+            
+            const calculationType = document.querySelector('input[name="calculationType"]:checked').value;
+            const sumVolume = document.getElementById('sumVolume').checked;
+            
+            const waves = [];
+            const waveCards = document.querySelectorAll('.wave-card');
+            
+            // Collect and validate wave data
+            waveCards.forEach(card => {
+                const waveId = card.id.split('-')[1];
+                const startDateInput = document.getElementById(`startDate-${waveId}`);
+                const durationInput = document.getElementById(`duration-${waveId}`);
+                const startDate = startDateInput.value;
+                const duration = parseInt(durationInput.value);
+                
+                if (!startDate) {
+                    startDateInput.classList.add('invalid');
+                    hasError = true;
+                } else {
+                    startDateInput.classList.add('valid');
+                }
+                
+                if (!duration || duration <= 0) {
+                    durationInput.classList.add('invalid');
+                    hasError = true;
+                } else {
+                    durationInput.classList.add('valid');
+                }
+                
+                let contacts, budget;
+                if (calculationType === 'contacts') {
+                    const contactsInput = document.getElementById(`contacts-${waveId}`);
+                    contacts = parseInt(contactsInput.value);
+                    if (!contacts || contacts <= 0) {
+                        contactsInput.classList.add('invalid');
+                        hasError = true;
+                    } else {
+                        contactsInput.classList.add('valid');
+                    }
+                } else {
+                    const budgetInput = document.getElementById(`budget-${waveId}`);
+                    budget = parseFloat(budgetInput.value);
+                    if (!budget || budget <= 0) {
+                        budgetInput.classList.add('invalid');
+                        hasError = true;
+                    } else {
+                        budgetInput.classList.add('valid');
+                    }
+                }
+                
+                if (startDate && duration) {
+                    waves.push({
+                        id: waveId,
+                        startDate,
+                        duration,
+                        contacts: contacts || null,
+                        budget: budget || null
+                    });
+                }
+            });
+            
+            if (hasError) {
+                alert('⚠️ Vul alle verplichte velden correct in voordat je berekent!');
+                // Scroll to first invalid field
+                const firstInvalid = document.querySelector('.invalid');
+                if (firstInvalid) {
+                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstInvalid.focus();
+                }
+                return;
+            }
+            
+            if (waves.length === 0) {
+                alert('⚠️ Voeg minimaal één wave toe!');
+                return;
+            }
+
+            // Calculate results
+            const results = [];
+            let totalContacts = 0;
+            let totalBudget = 0;
+            
+            waves.forEach(wave => {
+                const periodIndex = calculatePeriodIndex(wave.startDate, wave.duration);
+                
+                if (calculationType === 'contacts') {
+                    totalContacts += wave.contacts;
+                }
+            });
+
+            // Calculate volume index (on sum or individual)
+            waves.forEach(wave => {
+                const periodIndex = calculatePeriodIndex(wave.startDate, wave.duration);
+                let volumeIndex, nettoCpm, price, contacts;
+                
+                if (calculationType === 'contacts') {
+                    contacts = wave.contacts;
+                    volumeIndex = sumVolume ? getVolumeIndex(totalContacts) : getVolumeIndex(contacts);
+                    nettoCpm = baseCpm * periodIndex * volumeIndex;
+                    price = (contacts * nettoCpm) / 1000;
+                    totalBudget += price;
+                } else {
+                    // Budget-based calculation
+                    let estimatedContacts = (wave.budget * 1000) / (baseCpm * periodIndex * 1.0);
+                    volumeIndex = getVolumeIndex(estimatedContacts);
+                    nettoCpm = baseCpm * periodIndex * volumeIndex;
+                    contacts = (wave.budget * 1000) / nettoCpm;
+                    price = wave.budget;
+                    totalContacts += contacts;
+                    totalBudget += price;
+                }
+                
+                results.push({
+                    wave: wave.id,
+                    startDate: wave.startDate,
+                    duration: wave.duration,
+                    periodIndex: periodIndex.toFixed(4),
+                    volumeIndex: volumeIndex.toFixed(2),
+                    nettoCpm: nettoCpm.toFixed(2),
+                    contacts: Math.round(contacts),
+                    price: price.toFixed(2)
+                });
+            });
+
+            // Display results
+            displayResults(results, totalContacts, totalBudget, calculationType);
+
+            // Log to Google Sheets
+            logToGoogleSheets({
+                amName,
+                clientName,
+                network: 'Antwerpen',
+                calculationType,
+                baseCpm,
+                sumVolume,
+                waves: results,
+                totalContacts: Math.round(totalContacts),
+                totalBudget: totalBudget.toFixed(2)
+            });
+        }
+
+        function displayResults(results, totalContacts, totalBudget, calculationType) {
+            const resultsDiv = document.getElementById('results');
+            const resultsContent = document.getElementById('resultsContent');
+            
+            let html = '<div class="result-grid">';
+            
+            html += `
+                <div class="result-card">
+                    <div class="result-label">Totaal Contacten</div>
+                    <div class="result-value">${Math.round(totalContacts).toLocaleString('nl-BE')}</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">Totaal Budget</div>
+                    <div class="result-value">€${totalBudget.toFixed(2).replace('.', ',')}</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">Gemiddelde CPM</div>
+                    <div class="result-value">€${((totalBudget / totalContacts) * 1000).toFixed(2).replace('.', ',')}</div>
+                </div>
+            `;
+            
+            html += '</div>';
+
+            // Wave details - HORIZONTAL LAYOUT
+            if (results.length > 0) {
+                html += '<div class="wave-result">';
+                html += '<div class="wave-result-title">Wave Details Vergelijking</div>';
+                html += '<div class="wave-comparison-grid">';
+                
+                results.forEach((result, index) => {
+                    html += `
+                        <div class="wave-comparison-card">
+                            <div class="wave-comparison-header">Wave ${result.wave}</div>
+                            <div class="wave-comparison-item">
+                                <span class="wave-comparison-label">Startdatum</span>
+                                <span class="wave-comparison-value">${new Date(result.startDate).toLocaleDateString('nl-BE')}</span>
+                            </div>
+                            <div class="wave-comparison-item">
+                                <span class="wave-comparison-label">Duur</span>
+                                <span class="wave-comparison-value">${result.duration} dagen</span>
+                            </div>
+                            <div class="wave-comparison-item">
+                                <span class="wave-comparison-label">Periode-index</span>
+                                <span class="wave-comparison-value highlight">${result.periodIndex}</span>
+                            </div>
+                            <div class="wave-comparison-item">
+                                <span class="wave-comparison-label">Volume-index</span>
+                                <span class="wave-comparison-value highlight">${result.volumeIndex}</span>
+                            </div>
+                            <div class="wave-comparison-item">
+                                <span class="wave-comparison-label">Netto CPM</span>
+                                <span class="wave-comparison-value highlight">€${result.nettoCpm.replace('.', ',')}</span>
+                            </div>
+                            <div class="wave-comparison-item">
+                                <span class="wave-comparison-label">Contacten</span>
+                                <span class="wave-comparison-value">${result.contacts.toLocaleString('nl-BE')}</span>
+                            </div>
+                            <div class="wave-comparison-item total">
+                                <span class="wave-comparison-label">Prijs</span>
+                                <span class="wave-comparison-value">€${result.price.replace('.', ',')}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div></div>';
+            }
+
+            // Suggestion for next tier with 3-scenario analysis
+            const nextTier = getNextTier(totalContacts);
+            const sumVolume = document.getElementById('sumVolume').checked;
+            
+            if (nextTier || !sumVolume) {
+                const baseCpm = parseFloat(document.getElementById('baseCpm').value);
+                
+                // Calculate current average period index
+                let totalPeriodIndex = 0;
+                results.forEach(r => {
+                    totalPeriodIndex += parseFloat(r.periodIndex);
+                });
+                const avgPeriodIndex = totalPeriodIndex / results.length;
+                
+                // SCENARIO 1: Current situation (as is)
+                const scenario1Contacts = totalContacts;
+                const scenario1VolumeIndex = sumVolume ? getVolumeIndex(totalContacts) : 'mixed';
+                let scenario1Price = totalBudget;
+                
+                // SCENARIO 2: Merged (if toggle is OFF)
+                let scenario2Contacts = totalContacts;
+                let scenario2VolumeIndex = getVolumeIndex(totalContacts);
+                let scenario2Price = 0;
+                
+                if (!sumVolume) {
+                    // Recalculate with merged volume index
+                    results.forEach(result => {
+                        const contacts = result.contacts;
+                        const periodIndex = parseFloat(result.periodIndex);
+                        const nettoCpm = baseCpm * periodIndex * scenario2VolumeIndex;
+                        scenario2Price += (contacts * nettoCpm) / 1000;
+                    });
+                } else {
+                    scenario2Price = scenario1Price;
+                }
+                
+                // SCENARIO 3: Merged + extra to next tier
+                const scenario3Contacts = nextTier ? nextTier.min : scenario2Contacts;
+                const scenario3VolumeIndex = nextTier ? nextTier.index : scenario2VolumeIndex;
+                let scenario3Price = 0;
+                
+                results.forEach(result => {
+                    const periodIndex = parseFloat(result.periodIndex);
+                    const nettoCpm = baseCpm * periodIndex * scenario3VolumeIndex;
+                    // Proportionally distribute the extra contacts
+                    const proportion = result.contacts / totalContacts;
+                    const adjustedContacts = scenario3Contacts * proportion;
+                    scenario3Price += (adjustedContacts * nettoCpm) / 1000;
+                });
+                
+                const savings1to2 = scenario1Price - scenario2Price;
+                const savings1to3 = scenario1Price - scenario3Price;
+                const savings2to3 = scenario2Price - scenario3Price;
+                
+                html += `
+                    <div class="suggestion-box">
+                        <div class="suggestion-title">🎯 Volumekorting Optimalisatie - 3 Scenario's</div>
+                        <div class="suggestion-content">
+                            <div class="scenario-grid">
+                                <div class="scenario-card ${!sumVolume ? 'current' : 'active'}">
+                                    <div class="scenario-header">
+                                        <div class="scenario-number">1</div>
+                                        <div class="scenario-name">Huidige Situatie</div>
+                                    </div>
+                                    <div class="scenario-stats">
+                                        <div class="scenario-stat">
+                                            <span class="stat-label">Contacten:</span>
+                                            <span class="stat-value">${Math.round(scenario1Contacts).toLocaleString('nl-BE')}</span>
+                                        </div>
+                                        <div class="scenario-stat">
+                                            <span class="stat-label">Volume-index:</span>
+                                            <span class="stat-value">${typeof scenario1VolumeIndex === 'number' ? scenario1VolumeIndex.toFixed(2) : 'mixed'}</span>
+                                        </div>
+                                        <div class="scenario-stat">
+                                            <span class="stat-label">Avg. Netto CPM:</span>
+                                            <span class="stat-value">€${((scenario1Price / scenario1Contacts) * 1000).toFixed(2).replace('.', ',')}</span>
+                                        </div>
+                                        <div class="scenario-stat total">
+                                            <span class="stat-label">Totaalprijs:</span>
+                                            <span class="stat-value">€${scenario1Price.toFixed(2).replace('.', ',')}</span>
+                                        </div>
+                                    </div>
+                                    ${!sumVolume ? '<div class="scenario-badge">Actief</div>' : ''}
+                                </div>
+                                
+                                <div class="scenario-card ${sumVolume && !nextTier ? 'active' : savings1to2 > 0 ? 'better' : ''}">
+                                    <div class="scenario-header">
+                                        <div class="scenario-number">2</div>
+                                        <div class="scenario-name">Waves Samengevoegd</div>
+                                    </div>
+                                    <div class="scenario-stats">
+                                        <div class="scenario-stat">
+                                            <span class="stat-label">Contacten:</span>
+                                            <span class="stat-value">${Math.round(scenario2Contacts).toLocaleString('nl-BE')}</span>
+                                        </div>
+                                        <div class="scenario-stat">
+                                            <span class="stat-label">Volume-index:</span>
+                                            <span class="stat-value highlight">${scenario2VolumeIndex.toFixed(2)}</span>
+                                        </div>
+                                        <div class="scenario-stat">
+                                            <span class="stat-label">Avg. Netto CPM:</span>
+                                            <span class="stat-value highlight">€${((scenario2Price / scenario2Contacts) * 1000).toFixed(2).replace('.', ',')}</span>
+                                        </div>
+                                        <div class="scenario-stat total">
+                                            <span class="stat-label">Totaalprijs:</span>
+                                            <span class="stat-value">€${scenario2Price.toFixed(2).replace('.', ',')}</span>
+                                        </div>
+                                        ${savings1to2 > 0 ? `
+                                            <div class="scenario-saving">💰 -€${savings1to2.toFixed(2).replace('.', ',')}</div>
+                                        ` : ''}
+                                    </div>
+                                    ${sumVolume && !nextTier ? '<div class="scenario-badge active-badge">Actief</div>' : ''}
+                                    ${!sumVolume && savings1to2 > 0 ? '<div class="scenario-badge better-badge">Beter!</div>' : ''}
+                                </div>
+                                
+                                ${nextTier ? `
+                                <div class="scenario-card ${savings1to3 > 0 ? 'best' : 'neutral'}">
+                                    <div class="scenario-header">
+                                        <div class="scenario-number">3</div>
+                                        <div class="scenario-name">Samengevoegd + Extra</div>
+                                    </div>
+                                    <div class="scenario-stats">
+                                        <div class="scenario-stat">
+                                            <span class="stat-label">Contacten:</span>
+                                            <span class="stat-value highlight">${Math.round(scenario3Contacts).toLocaleString('nl-BE')}</span>
+                                        </div>
+                                        <div class="scenario-stat">
+                                            <span class="stat-label">Volume-index:</span>
+                                            <span class="stat-value highlight">${scenario3VolumeIndex.toFixed(2)}</span>
+                                        </div>
+                                        <div class="scenario-stat">
+                                            <span class="stat-label">Avg. Netto CPM:</span>
+                                            <span class="stat-value highlight">€${((scenario3Price / scenario3Contacts) * 1000).toFixed(2).replace('.', ',')}</span>
+                                        </div>
+                                        <div class="scenario-stat total">
+                                            <span class="stat-label">Totaalprijs:</span>
+                                            <span class="stat-value">€${scenario3Price.toFixed(2).replace('.', ',')}</span>
+                                        </div>
+                                        ${savings1to3 > 0 ? `
+                                            <div class="scenario-saving best">🎉 -€${savings1to3.toFixed(2).replace('.', ',')}</div>
+                                        ` : ''}
+                                    </div>
+                                    ${savings1to3 > 0 ? '<div class="scenario-badge best-badge">Beste Deal! ⭐</div>' : ''}
+                                </div>
+                                ` : ''}
+                            </div>
+                            
+                            ${!sumVolume && savings1to2 > 0 ? `
+                                <div class="scenario-recommendation">
+                                    <strong>💡 Aanbeveling:</strong> 
+                                    Zet de toggle "Volume-index berekenen op som" <strong>AAN</strong> 
+                                    ${nextTier && savings2to3 > 0 ? `en koop <strong>${(scenario3Contacts - totalContacts).toLocaleString('nl-BE')}</strong> extra contacten` : ''} 
+                                    voor de beste prijs!
+                                    ${savings1to3 > 0 ? `<br><span class="saving-highlight">Totale besparing: €${savings1to3.toFixed(2).replace('.', ',')}</span>` : ''}
+                                </div>
+                            ` : nextTier && savings2to3 > 0 ? `
+                                <div class="scenario-recommendation">
+                                    <strong>💡 Aanbeveling:</strong> 
+                                    Koop <strong>${(scenario3Contacts - totalContacts).toLocaleString('nl-BE')}</strong> extra contacten 
+                                    om in de volgende volumeschijf te komen!
+                                    <br><span class="saving-highlight">Extra besparing: €${savings2to3.toFixed(2).replace('.', ',')}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            resultsContent.innerHTML = html;
+            resultsDiv.classList.add('show');
+            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        async function logToGoogleSheets(data) {
+            // Google Sheets Web App URL - YOU NEED TO REPLACE THIS
+            const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwc5QKln5g11j8ELpaFKpc8_MHl_b4HvGwqkKpCs1S5bmUqeHY5Fi5GEX_a9oxKZheg/exec';
+            
+            try {
+                const response = await fetch(GOOGLE_SHEETS_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        timestamp: new Date().toISOString(),
+                        ...data
+                    })
+                });
+                
+                console.log('Data logged to Google Sheets');
+            } catch (error) {
+                console.error('Error logging to Google Sheets:', error);
+            }
+        }
+    </script>
+</body>
+</html>
