@@ -1103,13 +1103,44 @@
                     <label>Bereken op basis van:</label>
                     <div class="radio-group">
                         <label class="radio-option">
-                            <input type="radio" name="calculationType" value="contacts" checked>
+                            <input type="radio" name="calculationType" value="contacts" checked onchange="toggleMediabudgetCalculator()">
                             <span>Aantal Contacten</span>
                         </label>
                         <label class="radio-option">
-                            <input type="radio" name="calculationType" value="budget">
+                            <input type="radio" name="calculationType" value="budget" onchange="toggleMediabudgetCalculator()">
                             <span>Budget</span>
                         </label>
+                    </div>
+                </div>
+
+                <!-- Mediabudget Calculator (only visible when Budget is selected) -->
+                <div id="mediabudgetCalculator" style="display: none; margin-top: 25px; padding: 28px; background: linear-gradient(135deg, rgba(227, 6, 19, 0.05) 0%, rgba(255, 107, 157, 0.05) 100%); border-radius: 16px; border: 2px solid rgba(227, 6, 19, 0.2);">
+                    <div style="font-size: 20px; font-weight: 800; color: #e30613; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                        💰 Mediabudget Calculator
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                        <div class="form-group">
+                            <label for="oopBudget">OOP Budget (Te betalen) *</label>
+                            <input type="number" id="oopBudget" step="0.01" min="0" placeholder="20000" oninput="calculateMediabudget()">
+                            <small>Wat de klant betaalt op factuur</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="commissionPercent">Commissie (%) *</label>
+                            <input type="number" id="commissionPercent" step="0.1" min="0" max="100" placeholder="15" oninput="calculateMediabudget()">
+                            <small>Eerst afgetrokken</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="discountPercent">Korting (%) *</label>
+                            <input type="number" id="discountPercent" step="0.1" min="0" max="100" placeholder="10" oninput="calculateMediabudget()">
+                            <small>Daarna afgetrokken</small>
+                        </div>
+                    </div>
+                    <div style="padding: 20px; background: white; border-radius: 12px; border: 2px solid #e2e8f0;">
+                        <div style="font-size: 14px; color: #718096; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Berekend Mediabudget:</div>
+                        <div id="calculatedMediabudget" style="font-size: 32px; font-weight: 900; background: linear-gradient(135deg, #e30613 0%, #ff6b9d 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                            €0,00
+                        </div>
+                        <small style="color: #718096;">Dit bedrag kun je per wave verdelen</small>
                     </div>
                 </div>
 
@@ -1126,19 +1157,20 @@
             <div class="section">
                 <h2 class="section-title">Campagne Waves</h2>
                 
-                <div class="toggle-switch">
+                <div class="waves-container" id="wavesContainer">
+                    <!-- Waves worden hier dynamisch toegevoegd -->
+                </div>
+
+                <button class="add-wave-btn" onclick="addWave()">Wave Toevoegen</button>
+
+                <!-- Toggle only visible when multiple waves exist -->
+                <div class="toggle-switch" id="sumVolumeToggle" style="display: none; margin-top: 20px;">
                     <label class="switch">
                         <input type="checkbox" id="sumVolume">
                         <span class="slider"></span>
                     </label>
                     <span>Volume-index berekenen op som van alle waves</span>
                 </div>
-
-                <div class="waves-container" id="wavesContainer">
-                    <!-- Waves worden hier dynamisch toegevoegd -->
-                </div>
-
-                <button class="add-wave-btn" onclick="addWave()">Wave Toevoegen</button>
             </div>
 
             <!-- Bereken Button -->
@@ -1191,6 +1223,27 @@
             addWave();
         });
 
+        function toggleMediabudgetCalculator() {
+            const calculationType = document.querySelector('input[name="calculationType"]:checked').value;
+            const calculator = document.getElementById('mediabudgetCalculator');
+            calculator.style.display = calculationType === 'budget' ? 'block' : 'none';
+        }
+
+        function calculateMediabudget() {
+            const oop = parseFloat(document.getElementById('oopBudget').value) || 0;
+            const commission = parseFloat(document.getElementById('commissionPercent').value) || 0;
+            const discount = parseFloat(document.getElementById('discountPercent').value) || 0;
+
+            if (oop > 0 && commission >= 0 && discount >= 0) {
+                // Reverse calculation: OOP → Mediabudget
+                // Formula: Mediabudget = OOP / ((1 - commission/100) * (1 - discount/100))
+                const mediabudget = oop / ((1 - commission/100) * (1 - discount/100));
+                document.getElementById('calculatedMediabudget').textContent = '€' + mediabudget.toFixed(2).replace('.', ',');
+            } else {
+                document.getElementById('calculatedMediabudget').textContent = '€0,00';
+            }
+        }
+
         function addWave() {
             waveCounter++;
             const wavesContainer = document.getElementById('wavesContainer');
@@ -1226,11 +1279,19 @@
             `;
             
             wavesContainer.appendChild(waveCard);
+            updateSumVolumeToggleVisibility();
         }
 
         function removeWave(waveId) {
             const waveCard = document.getElementById(`wave-${waveId}`);
             waveCard.remove();
+            updateSumVolumeToggleVisibility();
+        }
+
+        function updateSumVolumeToggleVisibility() {
+            const waveCount = document.querySelectorAll('.wave-card').length;
+            const toggle = document.getElementById('sumVolumeToggle');
+            toggle.style.display = waveCount > 1 ? 'flex' : 'none';
         }
 
         // Update fields when calculation type changes
