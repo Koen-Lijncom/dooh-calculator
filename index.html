@@ -1432,9 +1432,23 @@
                     price = (contacts * nettoCpm) / 1000;
                     totalBudget += price;
                 } else {
-                    // Budget-based calculation
+                    // Budget-based calculation with ITERATIVE volume index convergence
+                    // Start with initial estimate (volume index 1.0)
                     let estimatedContacts = (wave.budget * 1000) / (baseCpm * periodIndex * 1.0);
                     volumeIndex = getVolumeIndex(estimatedContacts);
+                    
+                    // Iterate until volume index stabilizes (max 10 iterations)
+                    let previousVolumeIndex;
+                    let iterations = 0;
+                    do {
+                        previousVolumeIndex = volumeIndex;
+                        nettoCpm = baseCpm * periodIndex * volumeIndex;
+                        contacts = (wave.budget * 1000) / nettoCpm;
+                        volumeIndex = getVolumeIndex(contacts);
+                        iterations++;
+                    } while (volumeIndex !== previousVolumeIndex && iterations < 10);
+                    
+                    // Final calculation with converged volume index
                     nettoCpm = baseCpm * periodIndex * volumeIndex;
                     contacts = (wave.budget * 1000) / nettoCpm;
                     price = wave.budget;
@@ -1713,7 +1727,7 @@
         }
 
         async function logToGoogleSheets(data) {
-            // Google Sheets Web App URL - YOU NEED TO REPLACE THIS
+            // Google Sheets Web App URL
             const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwDhHFOhSzsD4kp54f4kRdsJLAleZNqPuuxZiTEubKVPgOKkPECLJf0qz1fZPwQS0H4/exec';
             
             try {
