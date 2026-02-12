@@ -1326,9 +1326,8 @@
             const start = new Date(startDate);
             let totalIndex = 0;
             
-            // Excel logic: campaign starts the day AFTER the start date
-            // So "Start 28 feb, 7 days" means: 1 march through 7 march
-            for (let i = 1; i <= duration; i++) {
+            // Campaign starts ON the start date (not day after)
+            for (let i = 0; i < duration; i++) {
                 const currentDate = new Date(start);
                 currentDate.setDate(start.getDate() + i);
                 const month = currentDate.getMonth() + 1;
@@ -1617,8 +1616,15 @@
             // Suggestion for next tier with 3-scenario analysis
             const nextTier = getNextTier(totalContacts);
             const sumVolume = document.getElementById('sumVolume').checked;
+            const waveCount = results.length;
             
-            if (nextTier || !sumVolume) {
+            // Only show scenarios if they provide value:
+            // - Show scenario 2 if: toggle OFF AND 2+ waves (merging makes sense)
+            // - Show scenario 3 if: there's a next tier available
+            const showScenario2 = !sumVolume && waveCount > 1;
+            const showScenario3 = nextTier !== null;
+            
+            if (showScenario2 || showScenario3) {
                 const baseCpm = parseFloat(document.getElementById('baseCpm').value);
                 
                 // Calculate current average period index
@@ -1628,17 +1634,15 @@
                 });
                 const avgPeriodIndex = totalPeriodIndex / results.length;
                 
-                // SCENARIO 1: Current situation (as is)
-                const scenario1Contacts = totalContacts;
-                const scenario1VolumeIndex = sumVolume ? getVolumeIndex(totalContacts) : 'mixed';
-                let scenario1Price = totalBudget;
+                // Current situation (for comparison only, not displayed)
+                const currentPrice = totalBudget;
                 
-                // SCENARIO 2: Merged (if toggle is OFF)
+                // SCENARIO 2: Merged (if toggle is OFF and 2+ waves)
                 let scenario2Contacts = totalContacts;
                 let scenario2VolumeIndex = getVolumeIndex(totalContacts);
                 let scenario2Price = 0;
                 
-                if (!sumVolume) {
+                if (!sumVolume && waveCount > 1) {
                     // Recalculate with merged volume index
                     results.forEach(result => {
                         const contacts = result.contacts;
@@ -1647,7 +1651,7 @@
                         scenario2Price += (contacts * nettoCpm) / 1000;
                     });
                 } else {
-                    scenario2Price = scenario1Price;
+                    scenario2Price = currentPrice;
                 }
                 
                 // SCENARIO 3: Merged + extra to next tier
@@ -1655,131 +1659,126 @@
                 const scenario3VolumeIndex = nextTier ? nextTier.index : scenario2VolumeIndex;
                 let scenario3Price = 0;
                 
-                results.forEach(result => {
-                    const periodIndex = parseFloat(result.periodIndex);
-                    const nettoCpm = baseCpm * periodIndex * scenario3VolumeIndex;
-                    // Proportionally distribute the extra contacts
-                    const proportion = result.contacts / totalContacts;
-                    const adjustedContacts = scenario3Contacts * proportion;
-                    scenario3Price += (adjustedContacts * nettoCpm) / 1000;
-                });
+                if (nextTier) {
+                    results.forEach(result => {
+                        const periodIndex = parseFloat(result.periodIndex);
+                        const nettoCpm = baseCpm * periodIndex * scenario3VolumeIndex;
+                        // Proportionally distribute the extra contacts
+                        const proportion = result.contacts / totalContacts;
+                        const adjustedContacts = scenario3Contacts * proportion;
+                        scenario3Price += (adjustedContacts * nettoCpm) / 1000;
+                    });
+                }
                 
-                const savings1to2 = scenario1Price - scenario2Price;
-                const savings1to3 = scenario1Price - scenario3Price;
+                const savingsCurrent2 = currentPrice - scenario2Price;
+                const savingsCurrent3 = currentPrice - scenario3Price;
                 const savings2to3 = scenario2Price - scenario3Price;
                 
                 html += `
                     <div class="suggestion-box">
-                        <div class="suggestion-title">🎯 Volumekorting Optimalisatie - 3 Scenario's</div>
+                        <div class="suggestion-title">🎯 Volumekorting Optimalisatie</div>
                         <div class="suggestion-content">
-                            <div class="scenario-grid">
-                                <div class="scenario-card ${!sumVolume ? 'current' : 'active'}">
-                                    <div class="scenario-header">
-                                        <div class="scenario-number">1</div>
-                                        <div class="scenario-name">Huidige Situatie</div>
-                                    </div>
-                                    <div class="scenario-stats">
-                                        <div class="scenario-stat">
-                                            <span class="stat-label">Contacten:</span>
-                                            <span class="stat-value">${Math.round(scenario1Contacts).toLocaleString('nl-BE')}</span>
-                                        </div>
-                                        <div class="scenario-stat">
-                                            <span class="stat-label">Volume-index:</span>
-                                            <span class="stat-value">${typeof scenario1VolumeIndex === 'number' ? scenario1VolumeIndex.toFixed(2) : 'mixed'}</span>
-                                        </div>
-                                        <div class="scenario-stat">
-                                            <span class="stat-label">Avg. Netto CPM:</span>
-                                            <span class="stat-value">€${((scenario1Price / scenario1Contacts) * 1000).toFixed(2).replace('.', ',')}</span>
-                                        </div>
-                                        <div class="scenario-stat total">
-                                            <span class="stat-label">Totaalprijs:</span>
-                                            <span class="stat-value">€${scenario1Price.toFixed(2).replace('.', ',')}</span>
-                                        </div>
-                                    </div>
-                                    ${!sumVolume ? '<div class="scenario-badge">Actief</div>' : ''}
+                            <div class="scenario-grid">`;
+                
+                // Only show Scenario 2 if toggle OFF and 2+ waves
+                if (showScenario2) {
+                    html += `
+                        <div class="scenario-card ${savingsCurrent2 > 0 ? 'better' : ''}">
+                            <div class="scenario-header">
+                                <div class="scenario-number">1</div>
+                                <div class="scenario-name">Waves Samengevoegd</div>
+                            </div>
+                            <div class="scenario-stats">
+                                <div class="scenario-stat">
+                                    <span class="stat-label">Contacten:</span>
+                                    <span class="stat-value">${Math.round(scenario2Contacts).toLocaleString('nl-BE')}</span>
                                 </div>
-                                
-                                <div class="scenario-card ${sumVolume && !nextTier ? 'active' : savings1to2 > 0 ? 'better' : ''}">
-                                    <div class="scenario-header">
-                                        <div class="scenario-number">2</div>
-                                        <div class="scenario-name">Waves Samengevoegd</div>
-                                    </div>
-                                    <div class="scenario-stats">
-                                        <div class="scenario-stat">
-                                            <span class="stat-label">Contacten:</span>
-                                            <span class="stat-value">${Math.round(scenario2Contacts).toLocaleString('nl-BE')}</span>
-                                        </div>
-                                        <div class="scenario-stat">
-                                            <span class="stat-label">Volume-index:</span>
-                                            <span class="stat-value highlight">${scenario2VolumeIndex.toFixed(2)}</span>
-                                        </div>
-                                        <div class="scenario-stat">
-                                            <span class="stat-label">Avg. Netto CPM:</span>
-                                            <span class="stat-value highlight">€${((scenario2Price / scenario2Contacts) * 1000).toFixed(2).replace('.', ',')}</span>
-                                        </div>
-                                        <div class="scenario-stat total">
-                                            <span class="stat-label">Totaalprijs:</span>
-                                            <span class="stat-value">€${scenario2Price.toFixed(2).replace('.', ',')}</span>
-                                        </div>
-                                        ${savings1to2 > 0 ? `
-                                            <div class="scenario-saving">💰 -€${savings1to2.toFixed(2).replace('.', ',')}</div>
-                                        ` : ''}
-                                    </div>
-                                    ${sumVolume && !nextTier ? '<div class="scenario-badge active-badge">Actief</div>' : ''}
-                                    ${!sumVolume && savings1to2 > 0 ? '<div class="scenario-badge better-badge">Beter!</div>' : ''}
+                                <div class="scenario-stat">
+                                    <span class="stat-label">Volume-index:</span>
+                                    <span class="stat-value highlight">${scenario2VolumeIndex.toFixed(2)}</span>
                                 </div>
-                                
-                                ${nextTier ? `
-                                <div class="scenario-card ${savings1to3 > 0 ? 'best' : 'neutral'}">
-                                    <div class="scenario-header">
-                                        <div class="scenario-number">3</div>
-                                        <div class="scenario-name">Samengevoegd + Extra</div>
-                                    </div>
-                                    <div class="scenario-stats">
-                                        <div class="scenario-stat">
-                                            <span class="stat-label">Contacten:</span>
-                                            <span class="stat-value highlight">${Math.round(scenario3Contacts).toLocaleString('nl-BE')}</span>
-                                        </div>
-                                        <div class="scenario-stat">
-                                            <span class="stat-label">Volume-index:</span>
-                                            <span class="stat-value highlight">${scenario3VolumeIndex.toFixed(2)}</span>
-                                        </div>
-                                        <div class="scenario-stat">
-                                            <span class="stat-label">Avg. Netto CPM:</span>
-                                            <span class="stat-value highlight">€${((scenario3Price / scenario3Contacts) * 1000).toFixed(2).replace('.', ',')}</span>
-                                        </div>
-                                        <div class="scenario-stat total">
-                                            <span class="stat-label">Totaalprijs:</span>
-                                            <span class="stat-value">€${scenario3Price.toFixed(2).replace('.', ',')}</span>
-                                        </div>
-                                        ${savings1to3 > 0 ? `
-                                            <div class="scenario-saving best">🎉 -€${savings1to3.toFixed(2).replace('.', ',')}</div>
-                                        ` : ''}
-                                    </div>
-                                    ${savings1to3 > 0 ? '<div class="scenario-badge best-badge">Beste Deal! ⭐</div>' : ''}
+                                <div class="scenario-stat">
+                                    <span class="stat-label">Avg. Netto CPM:</span>
+                                    <span class="stat-value highlight">€${((scenario2Price / scenario2Contacts) * 1000).toFixed(2).replace('.', ',')}</span>
                                 </div>
+                                <div class="scenario-stat total">
+                                    <span class="stat-label">Totaalprijs:</span>
+                                    <span class="stat-value">€${scenario2Price.toFixed(2).replace('.', ',')}</span>
+                                </div>
+                                ${savingsCurrent2 > 0 ? `
+                                    <div class="scenario-saving">💰 -€${savingsCurrent2.toFixed(2).replace('.', ',')}</div>
                                 ` : ''}
                             </div>
-                            
-                            ${!sumVolume && savings1to2 > 0 ? `
-                                <div class="scenario-recommendation">
-                                    <strong>💡 Aanbeveling:</strong> 
-                                    Zet de toggle "Volume-index berekenen op som" <strong>AAN</strong> 
-                                    ${nextTier && savings2to3 > 0 ? `en koop <strong>${(scenario3Contacts - totalContacts).toLocaleString('nl-BE')}</strong> extra contacten` : ''} 
-                                    voor de beste prijs!
-                                    ${savings1to3 > 0 ? `<br><span class="saving-highlight">Totale besparing: €${savings1to3.toFixed(2).replace('.', ',')}</span>` : ''}
+                            ${savingsCurrent2 > 0 ? '<div class="scenario-badge better-badge">Goedkoper!</div>' : ''}
+                        </div>`;
+                }
+                
+                // Only show Scenario 3 if there's a next tier
+                if (showScenario3) {
+                    html += `
+                        <div class="scenario-card ${savingsCurrent3 > 0 ? 'best' : 'neutral'}">
+                            <div class="scenario-header">
+                                <div class="scenario-number">${showScenario2 ? '2' : '1'}</div>
+                                <div class="scenario-name">${showScenario2 ? 'Samengevoegd + Extra' : 'Extra Contacten Kopen'}</div>
+                            </div>
+                            <div class="scenario-stats">
+                                <div class="scenario-stat">
+                                    <span class="stat-label">Contacten:</span>
+                                    <span class="stat-value highlight">${Math.round(scenario3Contacts).toLocaleString('nl-BE')}</span>
                                 </div>
-                            ` : nextTier && savings2to3 > 0 ? `
-                                <div class="scenario-recommendation">
-                                    <strong>💡 Aanbeveling:</strong> 
-                                    Koop <strong>${(scenario3Contacts - totalContacts).toLocaleString('nl-BE')}</strong> extra contacten 
-                                    om in de volgende volumeschijf te komen!
-                                    <br><span class="saving-highlight">Extra besparing: €${savings2to3.toFixed(2).replace('.', ',')}</span>
+                                <div class="scenario-stat">
+                                    <span class="stat-label">Volume-index:</span>
+                                    <span class="stat-value highlight">${scenario3VolumeIndex.toFixed(2)}</span>
                                 </div>
-                            ` : ''}
+                                <div class="scenario-stat">
+                                    <span class="stat-label">Avg. Netto CPM:</span>
+                                    <span class="stat-value highlight">€${((scenario3Price / scenario3Contacts) * 1000).toFixed(2).replace('.', ',')}</span>
+                                </div>
+                                <div class="scenario-stat total">
+                                    <span class="stat-label">Totaalprijs:</span>
+                                    <span class="stat-value">€${scenario3Price.toFixed(2).replace('.', ',')}</span>
+                                </div>
+                                ${savingsCurrent3 > 0 ? `
+                                    <div class="scenario-saving best">🎉 -€${savingsCurrent3.toFixed(2).replace('.', ',')}</div>
+                                ` : ''}
+                            </div>
+                            ${savingsCurrent3 > 0 ? '<div class="scenario-badge best-badge">Beste Deal! ⭐</div>' : ''}
+                        </div>`;
+                }
+                
+                html += `
+                            </div>`;
+                
+                // Recommendation
+                if (showScenario2 && savingsCurrent2 > 0 && showScenario3 && savings2to3 > 0) {
+                    html += `
+                        <div class="scenario-recommendation">
+                            <strong>💡 Aanbeveling:</strong> 
+                            Zet de toggle "Volume-index berekenen op som" <strong>AAN</strong> 
+                            en koop <strong>${(scenario3Contacts - totalContacts).toLocaleString('nl-BE')}</strong> extra contacten 
+                            voor de beste prijs!
+                            <br><span class="saving-highlight">Totale besparing: €${savingsCurrent3.toFixed(2).replace('.', ',')}</span>
+                        </div>`;
+                } else if (showScenario2 && savingsCurrent2 > 0) {
+                    html += `
+                        <div class="scenario-recommendation">
+                            <strong>💡 Aanbeveling:</strong> 
+                            Zet de toggle "Volume-index berekenen op som" <strong>AAN</strong> voor een betere prijs!
+                            <br><span class="saving-highlight">Besparing: €${savingsCurrent2.toFixed(2).replace('.', ',')}</span>
+                        </div>`;
+                } else if (showScenario3 && savingsCurrent3 > 0) {
+                    html += `
+                        <div class="scenario-recommendation">
+                            <strong>💡 Aanbeveling:</strong> 
+                            Koop <strong>${(scenario3Contacts - totalContacts).toLocaleString('nl-BE')}</strong> extra contacten 
+                            om in de volgende volumeschijf te komen!
+                            <br><span class="saving-highlight">Besparing: €${savingsCurrent3.toFixed(2).replace('.', ',')}</span>
+                        </div>`;
+                }
+                
+                html += `
                         </div>
-                    </div>
-                `;
+                    </div>`;
             }
 
             resultsContent.innerHTML = html;
