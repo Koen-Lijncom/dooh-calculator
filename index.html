@@ -1511,6 +1511,22 @@
                     // Final calculation with converged volume index
                     nettoCpm = baseCpm * periodIndex * volumeIndex;
                     contacts = (wave.budget * 1000) / nettoCpm;
+
+                    // SMART TIER CHECK: Is the next tier affordable with this budget?
+                    // If yes, automatically upgrade to next tier (better deal for client!)
+                    const nextTierForWave = getNextTier(contacts);
+                    if (nextTierForWave) {
+                        const nextTierCpm = baseCpm * periodIndex * nextTierForWave.index;
+                        const nextTierMinPrice = (nextTierForWave.min * nextTierCpm) / 1000;
+                        
+                        if (nextTierMinPrice <= wave.budget) {
+                            // Next tier is affordable! Use it automatically
+                            volumeIndex = nextTierForWave.index;
+                            nettoCpm = baseCpm * periodIndex * volumeIndex;
+                            contacts = (wave.budget * 1000) / nettoCpm;
+                        }
+                    }
+
                     price = wave.budget;
                     totalContacts += contacts;
                     totalBudget += price;
