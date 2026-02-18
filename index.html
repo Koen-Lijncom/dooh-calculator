@@ -1088,9 +1088,9 @@
 
                 <div class="form-group">
                     <label for="network">Netwerk *</label>
-                    <select id="network" required>
+                    <select id="network" required onchange="switchNetwork()">
                         <option value="antwerpen">DOOH Antwerpen</option>
-                        <option value="kust" disabled>DOOH Kust (Binnenkort beschikbaar)</option>
+                        <option value="kust">DOOH Kust</option>
                     </select>
                 </div>
             </div>
@@ -1217,6 +1217,14 @@
         ];
 
         let waveCounter = 0;
+
+        // Helper function to format currency with thousand separators
+        function formatCurrency(amount) {
+            return amount.toLocaleString('nl-BE', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
 
         // Initialize with one wave
         window.addEventListener('DOMContentLoaded', () => {
@@ -1574,11 +1582,11 @@
                 </div>
                 <div class="result-card">
                     <div class="result-label">Totaal Budget</div>
-                    <div class="result-value">€${totalBudget.toFixed(2).replace('.', ',')}</div>
+                    <div class="result-value">€${formatCurrency(totalBudget)}</div>
                 </div>
                 <div class="result-card">
                     <div class="result-label">Gemiddelde CPM</div>
-                    <div class="result-value">€${((totalBudget / totalContacts) * 1000).toFixed(2).replace('.', ',')}</div>
+                    <div class="result-value">€${formatCurrency((totalBudget / totalContacts) * 1000)}</div>
                 </div>
             `;
             
@@ -1613,23 +1621,23 @@
                                 <div style="font-weight: 800; color: #e30613; margin-bottom: 12px; font-size: 14px;">💰 Prijsopbouw:</div>
                                 <div class="wave-comparison-item">
                                     <span class="wave-comparison-label">Mediabudget</span>
-                                    <span class="wave-comparison-value">€${mediabudget.toFixed(2).replace('.', ',')}</span>
+                                    <span class="wave-comparison-value">€${formatCurrency(mediabudget)}</span>
                                 </div>
                                 ${discountPercent > 0 ? `
                                 <div class="wave-comparison-item">
                                     <span class="wave-comparison-label">− Korting (${discountPercent}%)</span>
-                                    <span class="wave-comparison-value" style="color: #10b981;">−€${discountAmount.toFixed(2).replace('.', ',')}</span>
+                                    <span class="wave-comparison-value" style="color: #10b981;">−€${formatCurrency(discountAmount)}</span>
                                 </div>
                                 ` : ''}
                                 ${commissionPercent > 0 ? `
                                 <div class="wave-comparison-item">
                                     <span class="wave-comparison-label">− Commissie (${commissionPercent}%)</span>
-                                    <span class="wave-comparison-value" style="color: #10b981;">−€${commissionAmount.toFixed(2).replace('.', ',')}</span>
+                                    <span class="wave-comparison-value" style="color: #10b981;">−€${formatCurrency(commissionAmount)}</span>
                                 </div>
                                 ` : ''}
                                 <div class="wave-comparison-item total" style="margin-top: 8px; padding-top: 8px; border-top: 2px solid rgba(0,0,0,0.1);">
                                     <span class="wave-comparison-label">= OOP (Te betalen)</span>
-                                    <span class="wave-comparison-value" style="color: #e30613; font-size: 18px;">€${oop.toFixed(2).replace('.', ',')}</span>
+                                    <span class="wave-comparison-value" style="color: #e30613; font-size: 18px;">€${formatCurrency(oop)}</span>
                                 </div>
                             </div>
                         `;
@@ -1656,7 +1664,7 @@
                             </div>
                             <div class="wave-comparison-item">
                                 <span class="wave-comparison-label">Netto CPM</span>
-                                <span class="wave-comparison-value highlight">€${result.nettoCpm.replace('.', ',')}</span>
+                                <span class="wave-comparison-value highlight">€${formatCurrency(parseFloat(result.nettoCpm))}</span>
                             </div>
                             <div class="wave-comparison-item">
                                 <span class="wave-comparison-label">Contacten</span>
@@ -1664,7 +1672,7 @@
                             </div>
                             <div class="wave-comparison-item total">
                                 <span class="wave-comparison-label">Prijs</span>
-                                <span class="wave-comparison-value">€${result.price.replace('.', ',')}</span>
+                                <span class="wave-comparison-value">€${formatCurrency(parseFloat(result.price))}</span>
                             </div>
                             ${oopHtml}
                         </div>
@@ -1755,23 +1763,23 @@
                             <div style="font-weight: 700; font-size: 12px; color: #718096; margin-bottom: 8px; text-transform: uppercase;">💰 Prijsopbouw</div>
                             <div class="scenario-stat">
                                 <span class="stat-label">Mediabudget:</span>
-                                <span class="stat-value">€${mediabudget.toFixed(2).replace('.', ',')}</span>
+                                <span class="stat-value">€${formatCurrency(mediabudget)}</span>
                             </div>
                             ${discountPercent > 0 ? `
                             <div class="scenario-stat">
                                 <span class="stat-label">− Korting (${discountPercent}%):</span>
-                                <span class="stat-value" style="color: #10b981;">−€${discountAmount.toFixed(2).replace('.', ',')}</span>
+                                <span class="stat-value" style="color: #10b981;">−€${formatCurrency(discountAmount)}</span>
                             </div>
                             ` : ''}
                             ${commissionPercent > 0 ? `
                             <div class="scenario-stat">
                                 <span class="stat-label">− Commissie (${commissionPercent}%):</span>
-                                <span class="stat-value" style="color: #10b981;">−€${commissionAmount.toFixed(2).replace('.', ',')}</span>
+                                <span class="stat-value" style="color: #10b981;">−€${formatCurrency(commissionAmount)}</span>
                             </div>
                             ` : ''}
                             <div class="scenario-stat" style="margin-top: 8px; padding-top: 8px; border-top: 2px solid rgba(0,0,0,0.1);">
                                 <span class="stat-label" style="font-weight: 800;">= OOP (Te betalen):</span>
-                                <span class="stat-value" style="color: #e30613; font-weight: 900;">€${oop.toFixed(2).replace('.', ',')}</span>
+                                <span class="stat-value" style="color: #e30613; font-weight: 900;">€${formatCurrency(oop)}</span>
                             </div>
                         </div>
                     `;
@@ -1802,15 +1810,15 @@
                                 </div>
                                 <div class="scenario-stat">
                                     <span class="stat-label">Avg. Netto CPM:</span>
-                                    <span class="stat-value highlight">€${((scenario2Price / scenario2Contacts) * 1000).toFixed(2).replace('.', ',')}</span>
+                                    <span class="stat-value highlight">€${formatCurrency((scenario2Price / scenario2Contacts) * 1000)}</span>
                                 </div>
                                 <div class="scenario-stat total">
                                     <span class="stat-label">Totaalprijs:</span>
-                                    <span class="stat-value">€${scenario2Price.toFixed(2).replace('.', ',')}</span>
+                                    <span class="stat-value">€${formatCurrency(scenario2Price)}</span>
                                 </div>
                                 ${generateOOPBreakdown(scenario2Price)}
                                 ${savingsCurrent2 > 0 ? `
-                                    <div class="scenario-saving">💰 -€${savingsCurrent2.toFixed(2).replace('.', ',')}</div>
+                                    <div class="scenario-saving">💰 -€${formatCurrency(savingsCurrent2)}</div>
                                 ` : ''}
                             </div>
                             ${savingsCurrent2 > 0 ? '<div class="scenario-badge better-badge">Goedkoper!</div>' : ''}
@@ -1836,15 +1844,15 @@
                                 </div>
                                 <div class="scenario-stat">
                                     <span class="stat-label">Avg. Netto CPM:</span>
-                                    <span class="stat-value highlight">€${((scenario3Price / scenario3Contacts) * 1000).toFixed(2).replace('.', ',')}</span>
+                                    <span class="stat-value highlight">€${formatCurrency((scenario3Price / scenario3Contacts) * 1000)}</span>
                                 </div>
                                 <div class="scenario-stat total">
                                     <span class="stat-label">Totaalprijs:</span>
-                                    <span class="stat-value">€${scenario3Price.toFixed(2).replace('.', ',')}</span>
+                                    <span class="stat-value">€${formatCurrency(scenario3Price)}</span>
                                 </div>
                                 ${generateOOPBreakdown(scenario3Price)}
                                 ${savingsCurrent3 > 0 ? `
-                                    <div class="scenario-saving best">🎉 -€${savingsCurrent3.toFixed(2).replace('.', ',')}</div>
+                                    <div class="scenario-saving best">🎉 -€${formatCurrency(savingsCurrent3)}</div>
                                 ` : ''}
                             </div>
                             ${savingsCurrent3 > 0 ? '<div class="scenario-badge best-badge">Beste Deal! ⭐</div>' : ''}
@@ -1862,14 +1870,14 @@
                             Zet de toggle "Volume-index berekenen op som" <strong>AAN</strong> 
                             en koop <strong>${(scenario3Contacts - totalContacts).toLocaleString('nl-BE')}</strong> extra contacten 
                             voor de beste prijs!
-                            <br><span class="saving-highlight">Totale besparing: €${savingsCurrent3.toFixed(2).replace('.', ',')}</span>
+                            <br><span class="saving-highlight">Totale besparing: €${formatCurrency(savingsCurrent3)}</span>
                         </div>`;
                 } else if (showScenario2 && savingsCurrent2 > 0) {
                     html += `
                         <div class="scenario-recommendation">
                             <strong>💡 Aanbeveling:</strong> 
                             Zet de toggle "Volume-index berekenen op som" <strong>AAN</strong> voor een betere prijs!
-                            <br><span class="saving-highlight">Besparing: €${savingsCurrent2.toFixed(2).replace('.', ',')}</span>
+                            <br><span class="saving-highlight">Besparing: €${formatCurrency(savingsCurrent2)}</span>
                         </div>`;
                 } else if (showScenario3 && savingsCurrent3 > 0) {
                     html += `
@@ -1877,7 +1885,7 @@
                             <strong>💡 Aanbeveling:</strong> 
                             Koop <strong>${(scenario3Contacts - totalContacts).toLocaleString('nl-BE')}</strong> extra contacten 
                             om in de volgende volumeschijf te komen!
-                            <br><span class="saving-highlight">Besparing: €${savingsCurrent3.toFixed(2).replace('.', ',')}</span>
+                            <br><span class="saving-highlight">Besparing: €${formatCurrency(savingsCurrent3)}</span>
                         </div>`;
                 }
                 
