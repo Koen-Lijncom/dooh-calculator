@@ -1500,36 +1500,51 @@
                     price = (contacts * nettoCpm) / 1000;
                     totalBudget += price;
                 } else {
-                    // Budget-based calculation with ITERATIVE volume index convergence
-                    // Start with initial estimate (volume index 1.0)
-                    let estimatedContacts = (wave.budget * 1000) / (baseCpm * periodIndex * 1.0);
-                    volumeIndex = getVolumeIndex(estimatedContacts);
-                    
-                    // Iterate until volume index stabilizes (max 10 iterations)
-                    let previousVolumeIndex;
-                    let iterations = 0;
-                    do {
-                        previousVolumeIndex = volumeIndex;
+                    // Budget-based calculation
+                    if (sumVolume) {
+                        // When sumVolume is ON: First calculate ALL waves to get total contacts,
+                        // then determine best volume index based on TOTAL
+                        // This is a two-pass approach
+                        
+                        // Pass 1: Estimate total contacts (will refine in pass 2)
+                        let estimatedContacts = (wave.budget * 1000) / (baseCpm * periodIndex * 1.0);
+                        volumeIndex = 1.0; // Temporary, will be set correctly after totalContacts known
                         nettoCpm = baseCpm * periodIndex * volumeIndex;
                         contacts = (wave.budget * 1000) / nettoCpm;
-                        volumeIndex = getVolumeIndex(contacts);
-                        iterations++;
-                    } while (volumeIndex !== previousVolumeIndex && iterations < 10);
-                    
-                    // Final calculation with converged volume index
-                    nettoCpm = baseCpm * periodIndex * volumeIndex;
-                    contacts = (wave.budget * 1000) / nettoCpm;
-
-                    // SMART TIER CHECK: Is the next tier affordable with this budget?
-                    // If yes, automatically upgrade to next tier (better deal for client!)
-                    const nextTierForWave = getNextTier(contacts);
-                    if (nextTierForWave) {
-                        const nextTierCpm = baseCpm * periodIndex * nextTierForWave.index;
-                        const nextTierMinPrice = (nextTierForWave.min * nextTierCpm) / 1000;
+                    } else {
+                        // When sumVolume is OFF: Calculate per wave independently with SMART TIER CHECK
+                        // Start with iterative convergence
+                        let estimatedContacts = (wave.budget * 1000) / (baseCpm * periodIndex * 1.0);
+                        volumeIndex = getVolumeIndex(estimatedContacts);
                         
-                        if (nextTierMinPrice <= wave.budget) {
-                            // Next tier is affordable! Use it automatically
-                            volumeIndex = nextTierForWave.index;
+                        let previousVolumeIndex;
+                        let iterations = 0;
+                        do {
+                            previousVolumeIndex = volumeIndex;
+                            nettoCpm = baseCpm * periodIndex * volumeIndex;
+                            contacts = (wave.budget * 1000) / nettoCpm;
+                            volumeIndex = getVolumeIndex(contacts);
+                            iterations++;
+                        } while (volumeIndex !== previousVolumeIndex && iterations < 10);
+                        
+                        nettoCpm = baseCpm * periodIndex * volumeIndex;
+                        contacts = (wave.budget * 1000) / nettoCpm;
+
+                        // SMART TIER CHECK: Find BEST tier that fits budget (per wave)
+                        let bestTier = null;
+                        for (let tier of volumeIndices) {
+                            const tierCpm = baseCpm * periodIndex * tier.index;
+                            const tierMinPrice = (tier.min * tierCpm) / 1000;
+                            
+                            if (tierMinPrice <= wave.budget) {
+                                if (!bestTier || tier.index < bestTier.index) {
+                                    bestTier = tier;
+                                }
+                            }
+                        }
+                        
+                        if (bestTier && bestTier.index < volumeIndex) {
+                            volumeIndex = bestTier.index;
                             nettoCpm = baseCpm * periodIndex * volumeIndex;
                             contacts = (wave.budget * 1000) / nettoCpm;
                         }
@@ -1551,6 +1566,55 @@
                     price: price.toFixed(2)
                 });
             });
+
+            // SECOND PASS: If sumVolume is ON and budget mode, recalculate with best tier for TOTAL
+            if (calculationType === 'budget' && sumVolume && totalContacts > 0) {
+                // Find best tier that fits within TOTAL budget
+                let bestVolumeIndex = getVolumeIndex(totalContacts);
+                
+                // Check if a better tier is affordable with total budget
+                for (let tier of volumeIndices) {
+                    if (tier.index >= bestVolumeIndex) continue; // Skip worse tiers
+                    
+                    // Calculate if this tier is affordable for ALL waves combined
+                    let totalPriceWithTier = 0;
+                    results.forEach((result, idx) => {
+                        const wave = waves[idx];
+                        const periodIndex = parseFloat(result.periodIndex);
+                        const tierCpm = baseCpm * periodIndex * tier.index;
+                        const tierContacts = (wave.budget * 1000) / tierCpm;
+                        const tierPrice = (tierContacts * tierCpm) / 1000;
+                        totalPriceWithTier += tierPrice;
+                    });
+                    
+                    // Check if total contacts with this tier meets tier minimum
+                    const totalContactsWithTier = results.reduce((sum, result, idx) => {
+                        const wave = waves[idx];
+                        const periodIndex = parseFloat(result.periodIndex);
+                        const tierCpm = baseCpm * periodIndex * tier.index;
+                        const tierContacts = (wave.budget * 1000) / tierCpm;
+                        return sum + tierContacts;
+                    }, 0);
+                    
+                    if (totalContactsWithTier >= tier.min && totalPriceWithTier <= totalBudget) {
+                        bestVolumeIndex = tier.index;
+                    }
+                }
+                
+                // Recalculate all waves with best volume index
+                totalContacts = 0;
+                results.forEach((result, idx) => {
+                    const wave = waves[idx];
+                    const periodIndex = parseFloat(result.periodIndex);
+                    const nettoCpm = baseCpm * periodIndex * bestVolumeIndex;
+                    const contacts = (wave.budget * 1000) / nettoCpm;
+                    
+                    result.volumeIndex = bestVolumeIndex.toFixed(2);
+                    result.nettoCpm = nettoCpm.toFixed(2);
+                    result.contacts = Math.round(contacts);
+                    totalContacts += contacts;
+                });
+            }
 
             // Display results
             displayResults(results, totalContacts, totalBudget, calculationType);
@@ -1712,13 +1776,51 @@
                 let scenario2Price = 0;
                 
                 if (!sumVolume && waveCount > 1) {
-                    // Recalculate with merged volume index
-                    results.forEach(result => {
-                        const contacts = result.contacts;
-                        const periodIndex = parseFloat(result.periodIndex);
-                        const nettoCpm = baseCpm * periodIndex * scenario2VolumeIndex;
-                        scenario2Price += (contacts * nettoCpm) / 1000;
-                    });
+                    // Recalculate with merged volume index - find BEST tier for total budget
+                    if (calculationType === 'budget') {
+                        // For budget mode: find best tier that fits total budget
+                        let bestVolumeIndex = scenario2VolumeIndex;
+                        
+                        for (let tier of volumeIndices) {
+                            if (tier.index >= bestVolumeIndex) continue;
+                            
+                            // Calculate total contacts if we use this tier
+                            let totalContactsWithTier = 0;
+                            results.forEach(result => {
+                                const wave = waves.find(w => w.id == result.wave);
+                                const periodIndex = parseFloat(result.periodIndex);
+                                const tierCpm = baseCpm * periodIndex * tier.index;
+                                const tierContacts = (wave.budget * 1000) / tierCpm;
+                                totalContactsWithTier += tierContacts;
+                            });
+                            
+                            // Check if we meet tier minimum
+                            if (totalContactsWithTier >= tier.min) {
+                                bestVolumeIndex = tier.index;
+                            }
+                        }
+                        
+                        // Recalculate with best tier
+                        scenario2VolumeIndex = bestVolumeIndex;
+                        scenario2Contacts = 0;
+                        scenario2Price = 0;
+                        results.forEach(result => {
+                            const wave = waves.find(w => w.id == result.wave);
+                            const periodIndex = parseFloat(result.periodIndex);
+                            const nettoCpm = baseCpm * periodIndex * scenario2VolumeIndex;
+                            const contacts = (wave.budget * 1000) / nettoCpm;
+                            scenario2Contacts += contacts;
+                            scenario2Price += wave.budget;
+                        });
+                    } else {
+                        // For contacts mode: just recalculate price with merged index
+                        results.forEach(result => {
+                            const contacts = result.contacts;
+                            const periodIndex = parseFloat(result.periodIndex);
+                            const nettoCpm = baseCpm * periodIndex * scenario2VolumeIndex;
+                            scenario2Price += (contacts * nettoCpm) / 1000;
+                        });
+                    }
                 } else {
                     scenario2Price = currentPrice;
                 }
