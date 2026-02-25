@@ -1400,7 +1400,10 @@
             }
             
             const calculationType = document.querySelector('input[name="calculationType"]:checked').value;
-            const sumVolume = document.getElementById('sumVolume').checked;
+            const sumVolumeToggle = document.getElementById('sumVolumeToggle');
+            const sumVolume = (sumVolumeToggle && sumVolumeToggle.style.display !== 'none') 
+                ? document.getElementById('sumVolume').checked 
+                : false;
             
             const waves = [];
             const waveCards = document.querySelectorAll('.wave-card');
@@ -1787,10 +1790,10 @@
                             // Calculate total contacts if we use this tier
                             let totalContactsWithTier = 0;
                             results.forEach(result => {
-                                const wave = waves.find(w => w.id == result.wave);
+                                const waveBudget = parseFloat(result.price);
                                 const periodIndex = parseFloat(result.periodIndex);
                                 const tierCpm = baseCpm * periodIndex * tier.index;
-                                const tierContacts = (wave.budget * 1000) / tierCpm;
+                                const tierContacts = (waveBudget * 1000) / tierCpm;
                                 totalContactsWithTier += tierContacts;
                             });
                             
@@ -1805,12 +1808,12 @@
                         scenario2Contacts = 0;
                         scenario2Price = 0;
                         results.forEach(result => {
-                            const wave = waves.find(w => w.id == result.wave);
+                            const waveBudget = parseFloat(result.price);
                             const periodIndex = parseFloat(result.periodIndex);
                             const nettoCpm = baseCpm * periodIndex * scenario2VolumeIndex;
-                            const contacts = (wave.budget * 1000) / nettoCpm;
+                            const contacts = (waveBudget * 1000) / nettoCpm;
                             scenario2Contacts += contacts;
-                            scenario2Price += wave.budget;
+                            scenario2Price += waveBudget;
                         });
                     } else {
                         // For contacts mode: just recalculate price with merged index
