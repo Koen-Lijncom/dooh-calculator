@@ -21,7 +21,6 @@
             overflow-x: hidden;
         }
 
-        /* Animated background orbs */
         body::before,
         body::after {
             content: '';
@@ -110,6 +109,74 @@
             color: #4a5568;
             font-weight: 500;
             opacity: 0.9;
+        }
+
+        .network-badge {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #e30613 0%, #ff6b9d 100%);
+            color: white;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        /* Kust link banner */
+        .kust-banner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            margin: 0 50px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+            padding: 18px 28px;
+            background: linear-gradient(135deg, rgba(0,119,182,0.08) 0%, rgba(144,224,239,0.08) 100%);
+            border: 2px solid rgba(0,119,182,0.25);
+            border-radius: 16px;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s;
+        }
+
+        .kust-banner:hover {
+            background: linear-gradient(135deg, rgba(0,119,182,0.14) 0%, rgba(144,224,239,0.14) 100%);
+            border-color: rgba(0,119,182,0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,119,182,0.15);
+        }
+
+        .kust-banner-text {
+            font-size: 15px;
+            color: #4a5568;
+            font-weight: 600;
+        }
+
+        .kust-banner-text strong {
+            color: #0077b6;
+        }
+
+        .kust-banner-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 22px;
+            background: linear-gradient(135deg, #0077b6 0%, #48cae4 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 800;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,119,182,0.3);
+            white-space: nowrap;
+        }
+
+        .kust-banner-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,119,182,0.4);
         }
 
         .content {
@@ -211,7 +278,6 @@
             transform: translateY(-2px);
         }
 
-        /* Validation states */
         input.invalid,
         select.invalid {
             border-color: #e30613;
@@ -374,13 +440,6 @@
             color: white;
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
-        }
-
-        .wave-inputs {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            flex: 1;
         }
 
         .wave-inputs {
@@ -552,14 +611,8 @@
         }
 
         @keyframes slideUp {
-            from { 
-                opacity: 0; 
-                transform: translateY(40px);
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .result-title {
@@ -602,9 +655,7 @@
             transition: opacity 0.4s;
         }
 
-        .result-card:hover::before {
-            opacity: 0.6;
-        }
+        .result-card:hover::before { opacity: 0.6; }
 
         .result-card:hover {
             transform: translateY(-10px) scale(1.03);
@@ -648,10 +699,7 @@
             letter-spacing: -0.5px;
         }
 
-        .wave-result-title::before {
-            content: '🌊';
-            font-size: 28px;
-        }
+        .wave-result-title::before { content: '🌊'; font-size: 28px; }
 
         .wave-comparison-grid {
             display: grid;
@@ -680,9 +728,7 @@
             transition: opacity 0.4s;
         }
 
-        .wave-comparison-card:hover::before {
-            opacity: 0.5;
-        }
+        .wave-comparison-card:hover::before { opacity: 0.5; }
 
         .wave-comparison-card:hover {
             transform: translateY(-8px);
@@ -728,10 +774,7 @@
             font-weight: 700;
         }
 
-        .wave-comparison-value.highlight {
-            color: #e30613;
-            font-size: 18px;
-        }
+        .wave-comparison-value.highlight { color: #e30613; }
 
         .wave-comparison-item.total .wave-comparison-value {
             font-size: 22px;
@@ -785,16 +828,6 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .scenario-card.current {
-            border-color: #cbd5e0;
-        }
-
-        .scenario-card.active {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(37, 99, 235, 0.08) 100%);
-            border-color: #3b82f6;
-            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.2);
-        }
-
         .scenario-card.better {
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.08) 100%);
             border-color: #10b981;
@@ -846,11 +879,7 @@
             letter-spacing: -0.3px;
         }
 
-        .scenario-stats {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+        .scenario-stats { display: flex; flex-direction: column; gap: 12px; }
 
         .scenario-stat {
             display: flex;
@@ -919,11 +948,6 @@
             letter-spacing: 0.5px;
         }
 
-        .scenario-badge.active-badge {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            color: white;
-        }
-
         .scenario-badge.better-badge {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
@@ -963,9 +987,7 @@
         }
 
         @media (max-width: 900px) {
-            .scenario-grid {
-                grid-template-columns: 1fr;
-            }
+            .scenario-grid { grid-template-columns: 1fr; }
         }
 
         .error {
@@ -1011,56 +1033,22 @@
         }
 
         @media (max-width: 1024px) {
-            .waves-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .wave-comparison-grid {
-                grid-template-columns: 1fr;
-            }
+            .waves-container { grid-template-columns: 1fr; }
+            .wave-comparison-grid { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 768px) {
-            .container {
-                margin: 20px;
-                border-radius: 24px;
-            }
-
-            .header {
-                padding: 50px 30px;
-            }
-
-            .header h1 {
-                font-size: 38px;
-            }
-
-            .content {
-                padding: 35px 30px;
-            }
-
-            .section {
-                padding: 28px;
-            }
-
-            .result-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .radio-group {
-                flex-direction: column;
-            }
-
-            .radio-option {
-                min-width: 100%;
-            }
-
-            .wave-card {
-                min-height: auto;
-            }
-            
-            .wave-comparison-grid {
-                grid-template-columns: 1fr;
-            }
+            .container { margin: 20px; border-radius: 24px; }
+            .header { padding: 50px 30px; }
+            .header h1 { font-size: 38px; }
+            .content { padding: 35px 30px; }
+            .section { padding: 28px; }
+            .result-grid { grid-template-columns: 1fr; }
+            .radio-group { flex-direction: column; }
+            .radio-option { min-width: 100%; }
+            .wave-card { min-height: auto; }
+            .wave-comparison-grid { grid-template-columns: 1fr; }
+            .kust-banner { margin: 0 20px 10px; flex-direction: column; text-align: center; gap: 10px; }
         }
     </style>
 </head>
@@ -1069,6 +1057,15 @@
         <div class="header">
             <h1>✨ DOOH Prijscalculator</h1>
             <p>Bereken direct en accuraat jouw digitale campagne prijzen</p>
+            <div class="network-badge">📍 Netwerk: DOOH Antwerpen</div>
+        </div>
+
+        <!-- Kust banner -->
+        <div class="kust-banner">
+            <div class="kust-banner-text">Campagne aan <strong>De Kust</strong> plannen?</div>
+            <a class="kust-banner-link" href="dooh-calculator-kust.html">
+                🏖️ Ga naar De Kust Calculator →
+            </a>
         </div>
 
         <div class="content">
@@ -1084,14 +1081,6 @@
                 <div class="form-group">
                     <label for="clientName">Naam Klant *</label>
                     <input type="text" id="clientName" placeholder="Vul hier de klantnaam in" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="network">Netwerk *</label>
-                    <select id="network" required onchange="switchNetwork()">
-                        <option value="antwerpen">DOOH Antwerpen</option>
-                        <option value="kust">DOOH Kust</option>
-                    </select>
                 </div>
             </div>
 
@@ -1113,7 +1102,7 @@
                     </div>
                 </div>
 
-                <!-- Mediabudget Calculator (only visible when Budget is selected) -->
+                <!-- Mediabudget Calculator -->
                 <div id="mediabudgetCalculator" style="display: none; margin-top: 25px; padding: 28px; background: linear-gradient(135deg, rgba(227, 6, 19, 0.05) 0%, rgba(255, 107, 157, 0.05) 100%); border-radius: 16px; border: 2px solid rgba(227, 6, 19, 0.2);">
                     <div style="font-size: 20px; font-weight: 800; color: #e30613; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
                         💰 Mediabudget Calculator
@@ -1144,12 +1133,10 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" style="margin-top: 26px;">
                     <label for="baseCpm">Basis CPM (€) *</label>
                     <input type="number" id="baseCpm" value="11.47" step="0.01" min="0" required>
-                    <small style="color: #666; font-size: 13px; display: block; margin-top: 5px;">
-                        Standaard: €11.47 - Pas aan indien nodig voor kortingen
-                    </small>
+                    <small>Standaard: €11.47 - Pas aan indien nodig voor kortingen</small>
                 </div>
             </div>
 
@@ -1157,13 +1144,10 @@
             <div class="section">
                 <h2 class="section-title">Campagne Waves</h2>
                 
-                <div class="waves-container" id="wavesContainer">
-                    <!-- Waves worden hier dynamisch toegevoegd -->
-                </div>
+                <div class="waves-container" id="wavesContainer"></div>
 
                 <button class="add-wave-btn" onclick="addWave()">Wave Toevoegen</button>
 
-                <!-- Toggle only visible when multiple waves exist -->
                 <div class="toggle-switch" id="sumVolumeToggle" style="display: none; margin-top: 20px;">
                     <label class="switch">
                         <input type="checkbox" id="sumVolume">
@@ -1184,28 +1168,16 @@
         </div>
 
         <div class="footer">
-            <p>&copy; 2026 Lijncom - DOOH Calculator | <a href="https://lijncom.be" target="_blank" style="color: #2c5aa0;">lijncom.be</a></p>
+            <p>&copy; 2026 Lijncom - DOOH Calculator | <a href="https://lijncom.be" target="_blank">lijncom.be</a></p>
         </div>
     </div>
 
     <script>
-        // Month indices
         const monthIndices = {
-            1: 0.75,  // Januari
-            2: 0.85,  // Februari
-            3: 1.00,  // Maart
-            4: 1.00,  // April
-            5: 1.10,  // Mei
-            6: 1.10,  // Juni
-            7: 0.80,  // Juli
-            8: 0.80,  // Augustus
-            9: 1.20,  // September
-            10: 1.10, // Oktober
-            11: 1.10, // November
-            12: 1.20  // December
+            1: 0.75, 2: 0.85, 3: 1.00, 4: 1.00, 5: 1.10, 6: 1.10,
+            7: 0.80, 8: 0.80, 9: 1.20, 10: 1.10, 11: 1.10, 12: 1.20
         };
 
-        // Volume indices
         const volumeIndices = [
             { min: 1, max: 499999, index: 1.10 },
             { min: 500000, max: 999999, index: 1.00 },
@@ -1218,18 +1190,11 @@
 
         let waveCounter = 0;
 
-        // Helper function to format currency with thousand separators
         function formatCurrency(amount) {
-            return amount.toLocaleString('nl-BE', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
+            return amount.toLocaleString('nl-BE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
-        // Initialize with one wave
-        window.addEventListener('DOMContentLoaded', () => {
-            addWave();
-        });
+        window.addEventListener('DOMContentLoaded', () => addWave());
 
         function toggleMediabudgetCalculator() {
             const calculationType = document.querySelector('input[name="calculationType"]:checked').value;
@@ -1241,10 +1206,7 @@
             const oop = parseFloat(document.getElementById('oopBudget').value) || 0;
             const commission = parseFloat(document.getElementById('commissionPercent').value) || 0;
             const discount = parseFloat(document.getElementById('discountPercent').value) || 0;
-
             if (oop > 0 && commission >= 0 && discount >= 0) {
-                // Reverse calculation: OOP → Mediabudget
-                // Formula: Mediabudget = OOP / ((1 - commission/100) * (1 - discount/100))
                 const mediabudget = oop / ((1 - commission/100) * (1 - discount/100));
                 document.getElementById('calculatedMediabudget').textContent = '€' + mediabudget.toFixed(2).replace('.', ',');
             } else {
@@ -1256,11 +1218,9 @@
             waveCounter++;
             const wavesContainer = document.getElementById('wavesContainer');
             const calculationType = document.querySelector('input[name="calculationType"]:checked').value;
-            
             const waveCard = document.createElement('div');
             waveCard.className = 'wave-card';
             waveCard.id = `wave-${waveCounter}`;
-            
             waveCard.innerHTML = `
                 <div class="wave-header">
                     <div class="wave-title">Wave ${waveCounter}</div>
@@ -1285,14 +1245,12 @@
                     </div>
                 </div>
             `;
-            
             wavesContainer.appendChild(waveCard);
             updateSumVolumeToggleVisibility();
         }
 
         function removeWave(waveId) {
-            const waveCard = document.getElementById(`wave-${waveId}`);
-            waveCard.remove();
+            document.getElementById(`wave-${waveId}`).remove();
             updateSumVolumeToggleVisibility();
         }
 
@@ -1302,29 +1260,21 @@
             toggle.style.display = waveCount > 1 ? 'flex' : 'none';
         }
 
-        // Update fields when calculation type changes
         document.querySelectorAll('input[name="calculationType"]').forEach(radio => {
             radio.addEventListener('change', (e) => {
                 const calculationType = e.target.value;
-                const allWaves = document.querySelectorAll('.wave-card');
-                
-                allWaves.forEach(wave => {
+                document.querySelectorAll('.wave-card').forEach(wave => {
                     const waveId = wave.id.split('-')[1];
                     const contactsGroup = document.getElementById(`contactsGroup-${waveId}`);
                     const budgetGroup = document.getElementById(`budgetGroup-${waveId}`);
                     const contactsInput = document.getElementById(`contacts-${waveId}`);
                     const budgetInput = document.getElementById(`budget-${waveId}`);
-                    
                     if (calculationType === 'contacts') {
-                        contactsGroup.style.display = 'block';
-                        budgetGroup.style.display = 'none';
-                        contactsInput.required = true;
-                        budgetInput.required = false;
+                        contactsGroup.style.display = 'block'; budgetGroup.style.display = 'none';
+                        contactsInput.required = true; budgetInput.required = false;
                     } else {
-                        contactsGroup.style.display = 'none';
-                        budgetGroup.style.display = 'block';
-                        contactsInput.required = false;
-                        budgetInput.required = true;
+                        contactsGroup.style.display = 'none'; budgetGroup.style.display = 'block';
+                        contactsInput.required = false; budgetInput.required = true;
                     }
                 });
             });
@@ -1333,169 +1283,103 @@
         function calculatePeriodIndex(startDate, duration) {
             const start = new Date(startDate);
             let totalIndex = 0;
-            
-            // Campaign starts ON the start date (not day after)
             for (let i = 0; i < duration; i++) {
                 const currentDate = new Date(start);
                 currentDate.setDate(start.getDate() + i);
                 const month = currentDate.getMonth() + 1;
                 totalIndex += monthIndices[month];
             }
-            
             return totalIndex / duration;
         }
 
         function getVolumeIndex(contacts) {
             for (let tier of volumeIndices) {
-                if (contacts >= tier.min && contacts <= tier.max) {
-                    return tier.index;
-                }
+                if (contacts >= tier.min && contacts <= tier.max) return tier.index;
             }
             return volumeIndices[volumeIndices.length - 1].index;
         }
 
         function getNextTier(contacts) {
             for (let tier of volumeIndices) {
-                if (contacts < tier.min) {
-                    return {
-                        min: tier.min,
-                        index: tier.index,
-                        difference: tier.min - contacts
-                    };
-                }
+                if (contacts < tier.min) return { min: tier.min, index: tier.index, difference: tier.min - contacts };
             }
             return null;
         }
 
         function calculate() {
-            // Clear previous validation
             document.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
             document.querySelectorAll('.valid').forEach(el => el.classList.remove('valid'));
-            
-            // Validation
+
             const amName = document.getElementById('amName').value.trim();
             const clientName = document.getElementById('clientName').value.trim();
             let hasError = false;
-            
-            if (!amName) {
-                document.getElementById('amName').classList.add('invalid');
-                hasError = true;
-            } else {
-                document.getElementById('amName').classList.add('valid');
-            }
-            
-            if (!clientName) {
-                document.getElementById('clientName').classList.add('invalid');
-                hasError = true;
-            } else {
-                document.getElementById('clientName').classList.add('valid');
-            }
+
+            if (!amName) { document.getElementById('amName').classList.add('invalid'); hasError = true; }
+            else document.getElementById('amName').classList.add('valid');
+
+            if (!clientName) { document.getElementById('clientName').classList.add('invalid'); hasError = true; }
+            else document.getElementById('clientName').classList.add('valid');
 
             const baseCpm = parseFloat(document.getElementById('baseCpm').value);
-            if (!baseCpm || baseCpm <= 0) {
-                document.getElementById('baseCpm').classList.add('invalid');
-                hasError = true;
-            } else {
-                document.getElementById('baseCpm').classList.add('valid');
-            }
-            
+            if (!baseCpm || baseCpm <= 0) { document.getElementById('baseCpm').classList.add('invalid'); hasError = true; }
+            else document.getElementById('baseCpm').classList.add('valid');
+
             const calculationType = document.querySelector('input[name="calculationType"]:checked').value;
             const sumVolumeToggle = document.getElementById('sumVolumeToggle');
-            const sumVolume = (sumVolumeToggle && sumVolumeToggle.style.display !== 'none') 
-                ? document.getElementById('sumVolume').checked 
-                : false;
-            
+            const sumVolume = (sumVolumeToggle && sumVolumeToggle.style.display !== 'none')
+                ? document.getElementById('sumVolume').checked : false;
+
             const waves = [];
             const waveCards = document.querySelectorAll('.wave-card');
-            
-            // Collect and validate wave data
+
             waveCards.forEach(card => {
                 const waveId = card.id.split('-')[1];
                 const startDateInput = document.getElementById(`startDate-${waveId}`);
                 const durationInput = document.getElementById(`duration-${waveId}`);
                 const startDate = startDateInput.value;
                 const duration = parseInt(durationInput.value);
-                
-                if (!startDate) {
-                    startDateInput.classList.add('invalid');
-                    hasError = true;
-                } else {
-                    startDateInput.classList.add('valid');
-                }
-                
-                if (!duration || duration <= 0) {
-                    durationInput.classList.add('invalid');
-                    hasError = true;
-                } else {
-                    durationInput.classList.add('valid');
-                }
-                
+
+                if (!startDate) { startDateInput.classList.add('invalid'); hasError = true; }
+                else startDateInput.classList.add('valid');
+                if (!duration || duration <= 0) { durationInput.classList.add('invalid'); hasError = true; }
+                else durationInput.classList.add('valid');
+
                 let contacts, budget;
                 if (calculationType === 'contacts') {
                     const contactsInput = document.getElementById(`contacts-${waveId}`);
                     contacts = parseInt(contactsInput.value);
-                    if (!contacts || contacts <= 0) {
-                        contactsInput.classList.add('invalid');
-                        hasError = true;
-                    } else {
-                        contactsInput.classList.add('valid');
-                    }
+                    if (!contacts || contacts <= 0) { contactsInput.classList.add('invalid'); hasError = true; }
+                    else contactsInput.classList.add('valid');
                 } else {
                     const budgetInput = document.getElementById(`budget-${waveId}`);
                     budget = parseFloat(budgetInput.value);
-                    if (!budget || budget <= 0) {
-                        budgetInput.classList.add('invalid');
-                        hasError = true;
-                    } else {
-                        budgetInput.classList.add('valid');
-                    }
+                    if (!budget || budget <= 0) { budgetInput.classList.add('invalid'); hasError = true; }
+                    else budgetInput.classList.add('valid');
                 }
-                
-                if (startDate && duration) {
-                    waves.push({
-                        id: waveId,
-                        startDate,
-                        duration,
-                        contacts: contacts || null,
-                        budget: budget || null
-                    });
-                }
+
+                if (startDate && duration) waves.push({ id: waveId, startDate, duration, contacts: contacts || null, budget: budget || null });
             });
-            
+
             if (hasError) {
                 alert('⚠️ Vul alle verplichte velden correct in voordat je berekent!');
-                // Scroll to first invalid field
                 const firstInvalid = document.querySelector('.invalid');
-                if (firstInvalid) {
-                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    firstInvalid.focus();
-                }
+                if (firstInvalid) { firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' }); firstInvalid.focus(); }
                 return;
             }
-            
-            if (waves.length === 0) {
-                alert('⚠️ Voeg minimaal één wave toe!');
-                return;
-            }
+            if (waves.length === 0) { alert('⚠️ Voeg minimaal één wave toe!'); return; }
 
-            // Calculate results
             const results = [];
             let totalContacts = 0;
             let totalBudget = 0;
-            
+
             waves.forEach(wave => {
-                const periodIndex = calculatePeriodIndex(wave.startDate, wave.duration);
-                
-                if (calculationType === 'contacts') {
-                    totalContacts += wave.contacts;
-                }
+                if (calculationType === 'contacts') totalContacts += wave.contacts;
             });
 
-            // Calculate volume index (on sum or individual)
             waves.forEach(wave => {
                 const periodIndex = calculatePeriodIndex(wave.startDate, wave.duration);
                 let volumeIndex, nettoCpm, price, contacts;
-                
+
                 if (calculationType === 'contacts') {
                     contacts = wave.contacts;
                     volumeIndex = sumVolume ? getVolumeIndex(totalContacts) : getVolumeIndex(contacts);
@@ -1503,23 +1387,14 @@
                     price = (contacts * nettoCpm) / 1000;
                     totalBudget += price;
                 } else {
-                    // Budget-based calculation
                     if (sumVolume) {
-                        // When sumVolume is ON: First calculate ALL waves to get total contacts,
-                        // then determine best volume index based on TOTAL
-                        // This is a two-pass approach
-                        
-                        // Pass 1: Estimate total contacts (will refine in pass 2)
                         let estimatedContacts = (wave.budget * 1000) / (baseCpm * periodIndex * 1.0);
-                        volumeIndex = 1.0; // Temporary, will be set correctly after totalContacts known
+                        volumeIndex = 1.0;
                         nettoCpm = baseCpm * periodIndex * volumeIndex;
                         contacts = (wave.budget * 1000) / nettoCpm;
                     } else {
-                        // When sumVolume is OFF: Calculate per wave independently with SMART TIER CHECK
-                        // Start with iterative convergence
                         let estimatedContacts = (wave.budget * 1000) / (baseCpm * periodIndex * 1.0);
                         volumeIndex = getVolumeIndex(estimatedContacts);
-                        
                         let previousVolumeIndex;
                         let iterations = 0;
                         do {
@@ -1529,89 +1404,53 @@
                             volumeIndex = getVolumeIndex(contacts);
                             iterations++;
                         } while (volumeIndex !== previousVolumeIndex && iterations < 10);
-                        
                         nettoCpm = baseCpm * periodIndex * volumeIndex;
                         contacts = (wave.budget * 1000) / nettoCpm;
 
-                        // SMART TIER CHECK: Find BEST tier that fits budget (per wave)
                         let bestTier = null;
                         for (let tier of volumeIndices) {
                             const tierCpm = baseCpm * periodIndex * tier.index;
                             const tierMinPrice = (tier.min * tierCpm) / 1000;
-                            
                             if (tierMinPrice <= wave.budget) {
-                                if (!bestTier || tier.index < bestTier.index) {
-                                    bestTier = tier;
-                                }
+                                if (!bestTier || tier.index < bestTier.index) bestTier = tier;
                             }
                         }
-                        
                         if (bestTier && bestTier.index < volumeIndex) {
                             volumeIndex = bestTier.index;
                             nettoCpm = baseCpm * periodIndex * volumeIndex;
                             contacts = (wave.budget * 1000) / nettoCpm;
                         }
                     }
-
                     price = wave.budget;
                     totalContacts += contacts;
                     totalBudget += price;
                 }
-                
+
                 results.push({
-                    wave: wave.id,
-                    startDate: wave.startDate,
-                    duration: wave.duration,
-                    periodIndex: periodIndex.toFixed(4),
-                    volumeIndex: volumeIndex.toFixed(2),
-                    nettoCpm: nettoCpm.toFixed(2),
-                    contacts: Math.round(contacts),
-                    price: price.toFixed(2)
+                    wave: wave.id, startDate: wave.startDate, duration: wave.duration,
+                    periodIndex: periodIndex.toFixed(4), volumeIndex: volumeIndex.toFixed(2),
+                    nettoCpm: nettoCpm.toFixed(2), contacts: Math.round(contacts), price: price.toFixed(2)
                 });
             });
 
-            // SECOND PASS: If sumVolume is ON and budget mode, recalculate with best tier for TOTAL
             if (calculationType === 'budget' && sumVolume && totalContacts > 0) {
-                // Find best tier that fits within TOTAL budget
                 let bestVolumeIndex = getVolumeIndex(totalContacts);
-                
-                // Check if a better tier is affordable with total budget
                 for (let tier of volumeIndices) {
-                    if (tier.index >= bestVolumeIndex) continue; // Skip worse tiers
-                    
-                    // Calculate if this tier is affordable for ALL waves combined
-                    let totalPriceWithTier = 0;
-                    results.forEach((result, idx) => {
-                        const wave = waves[idx];
-                        const periodIndex = parseFloat(result.periodIndex);
-                        const tierCpm = baseCpm * periodIndex * tier.index;
-                        const tierContacts = (wave.budget * 1000) / tierCpm;
-                        const tierPrice = (tierContacts * tierCpm) / 1000;
-                        totalPriceWithTier += tierPrice;
-                    });
-                    
-                    // Check if total contacts with this tier meets tier minimum
+                    if (tier.index >= bestVolumeIndex) continue;
                     const totalContactsWithTier = results.reduce((sum, result, idx) => {
                         const wave = waves[idx];
                         const periodIndex = parseFloat(result.periodIndex);
                         const tierCpm = baseCpm * periodIndex * tier.index;
-                        const tierContacts = (wave.budget * 1000) / tierCpm;
-                        return sum + tierContacts;
+                        return sum + (wave.budget * 1000) / tierCpm;
                     }, 0);
-                    
-                    if (totalContactsWithTier >= tier.min && totalPriceWithTier <= totalBudget) {
-                        bestVolumeIndex = tier.index;
-                    }
+                    if (totalContactsWithTier >= tier.min) bestVolumeIndex = tier.index;
                 }
-                
-                // Recalculate all waves with best volume index
                 totalContacts = 0;
                 results.forEach((result, idx) => {
                     const wave = waves[idx];
                     const periodIndex = parseFloat(result.periodIndex);
                     const nettoCpm = baseCpm * periodIndex * bestVolumeIndex;
                     const contacts = (wave.budget * 1000) / nettoCpm;
-                    
                     result.volumeIndex = bestVolumeIndex.toFixed(2);
                     result.nettoCpm = nettoCpm.toFixed(2);
                     result.contacts = Math.round(contacts);
@@ -1619,29 +1458,20 @@
                 });
             }
 
-            // Display results
             displayResults(results, totalContacts, totalBudget, calculationType);
 
-            // Log to Google Sheets
+            // Network hardcoded as Antwerpen
             logToGoogleSheets({
-                amName,
-                clientName,
-                network: 'Antwerpen',
-                calculationType,
-                baseCpm,
-                sumVolume,
-                waves: results,
-                totalContacts: Math.round(totalContacts),
-                totalBudget: totalBudget.toFixed(2)
+                amName, clientName, network: 'Antwerpen', calculationType, baseCpm, sumVolume,
+                waves: results, totalContacts: Math.round(totalContacts), totalBudget: totalBudget.toFixed(2)
             });
         }
 
         function displayResults(results, totalContacts, totalBudget, calculationType) {
             const resultsDiv = document.getElementById('results');
             const resultsContent = document.getElementById('resultsContent');
-            
+
             let html = '<div class="result-grid">';
-            
             html += `
                 <div class="result-card">
                     <div class="result-label">Totaal Contacten</div>
@@ -1654,26 +1484,17 @@
                 <div class="result-card">
                     <div class="result-label">Gemiddelde CPM</div>
                     <div class="result-value">€${formatCurrency((totalBudget / totalContacts) * 1000)}</div>
-                </div>
-            `;
-            
+                </div>`;
             html += '</div>';
 
-            // Wave details - HORIZONTAL LAYOUT
             if (results.length > 0) {
-                html += '<div class="wave-result">';
-                html += '<div class="wave-result-title">Wave Details Vergelijking</div>';
-                html += '<div class="wave-comparison-grid">';
-                
+                html += '<div class="wave-result"><div class="wave-result-title">Wave Details Vergelijking</div><div class="wave-comparison-grid">';
                 results.forEach((result, index) => {
-                    // Get commission and discount from mediabudget calculator if filled
                     const oopBudget = parseFloat(document.getElementById('oopBudget')?.value) || 0;
                     const commissionPercent = parseFloat(document.getElementById('commissionPercent')?.value) || 0;
                     const discountPercent = parseFloat(document.getElementById('discountPercent')?.value) || 0;
-                    
                     const hasCommissionDiscount = commissionPercent > 0 || discountPercent > 0;
-                    
-                    // Calculate OOP breakdown if commission/discount are filled
+
                     let oopHtml = '';
                     if (hasCommissionDiscount) {
                         const mediabudget = parseFloat(result.price.replace(',', '.'));
@@ -1682,7 +1503,6 @@
                         const afterCommission = afterDiscount * (1 - commissionPercent / 100);
                         const commissionAmount = afterDiscount - afterCommission;
                         const oop = afterCommission;
-                        
                         oopHtml = `
                             <div style="margin-top: 16px; padding-top: 16px; border-top: 2px solid rgba(227, 6, 19, 0.2);">
                                 <div style="font-weight: 800; color: #e30613; margin-bottom: 12px; font-size: 14px;">💰 Prijsopbouw:</div>
@@ -1690,26 +1510,21 @@
                                     <span class="wave-comparison-label">Mediabudget</span>
                                     <span class="wave-comparison-value">€${formatCurrency(mediabudget)}</span>
                                 </div>
-                                ${discountPercent > 0 ? `
-                                <div class="wave-comparison-item">
+                                ${discountPercent > 0 ? `<div class="wave-comparison-item">
                                     <span class="wave-comparison-label">− Korting (${discountPercent}%)</span>
                                     <span class="wave-comparison-value" style="color: #10b981;">−€${formatCurrency(discountAmount)}</span>
-                                </div>
-                                ` : ''}
-                                ${commissionPercent > 0 ? `
-                                <div class="wave-comparison-item">
+                                </div>` : ''}
+                                ${commissionPercent > 0 ? `<div class="wave-comparison-item">
                                     <span class="wave-comparison-label">− Commissie (${commissionPercent}%)</span>
                                     <span class="wave-comparison-value" style="color: #10b981;">−€${formatCurrency(commissionAmount)}</span>
-                                </div>
-                                ` : ''}
-                                <div class="wave-comparison-item total" style="margin-top: 8px; padding-top: 8px; border-top: 2px solid rgba(0,0,0,0.1);">
+                                </div>` : ''}
+                                <div class="wave-comparison-item total">
                                     <span class="wave-comparison-label">= OOP (Te betalen)</span>
                                     <span class="wave-comparison-value" style="color: #e30613; font-size: 18px;">€${formatCurrency(oop)}</span>
                                 </div>
-                            </div>
-                        `;
+                            </div>`;
                     }
-                    
+
                     html += `
                         <div class="wave-comparison-card">
                             <div class="wave-comparison-header">Wave ${result.wave}</div>
@@ -1742,261 +1557,143 @@
                                 <span class="wave-comparison-value">€${formatCurrency(parseFloat(result.price))}</span>
                             </div>
                             ${oopHtml}
-                        </div>
-                    `;
+                        </div>`;
                 });
-                
                 html += '</div></div>';
             }
 
-            // Suggestion for next tier with 3-scenario analysis
             const nextTier = getNextTier(totalContacts);
             const sumVolume = document.getElementById('sumVolume').checked;
             const waveCount = results.length;
-            
-            // Only show scenarios if they provide value:
-            // - Show scenario 2 if: toggle OFF AND 2+ waves (merging makes sense)
-            // - Show scenario 3 if: there's a next tier available
             const showScenario2 = !sumVolume && waveCount > 1;
             const showScenario3 = nextTier !== null;
-            
+            const baseCpm = parseFloat(document.getElementById('baseCpm').value);
+
             if (showScenario2 || showScenario3) {
-                const baseCpm = parseFloat(document.getElementById('baseCpm').value);
-                
-                // Calculate current average period index
-                let totalPeriodIndex = 0;
-                results.forEach(r => {
-                    totalPeriodIndex += parseFloat(r.periodIndex);
-                });
-                const avgPeriodIndex = totalPeriodIndex / results.length;
-                
-                // Current situation (for comparison only, not displayed)
-                const currentPrice = totalBudget;
-                
-                // SCENARIO 2: Merged (if toggle is OFF and 2+ waves)
                 let scenario2Contacts = totalContacts;
                 let scenario2VolumeIndex = getVolumeIndex(totalContacts);
                 let scenario2Price = 0;
-                
+
                 if (!sumVolume && waveCount > 1) {
-                    // Recalculate with merged volume index - find BEST tier for total budget
                     if (calculationType === 'budget') {
-                        // For budget mode: find best tier that fits total budget
                         let bestVolumeIndex = scenario2VolumeIndex;
-                        
                         for (let tier of volumeIndices) {
                             if (tier.index >= bestVolumeIndex) continue;
-                            
-                            // Calculate total contacts if we use this tier
                             let totalContactsWithTier = 0;
                             results.forEach(result => {
                                 const waveBudget = parseFloat(result.price);
                                 const periodIndex = parseFloat(result.periodIndex);
                                 const tierCpm = baseCpm * periodIndex * tier.index;
-                                const tierContacts = (waveBudget * 1000) / tierCpm;
-                                totalContactsWithTier += tierContacts;
+                                totalContactsWithTier += (waveBudget * 1000) / tierCpm;
                             });
-                            
-                            // Check if we meet tier minimum
-                            if (totalContactsWithTier >= tier.min) {
-                                bestVolumeIndex = tier.index;
-                            }
+                            if (totalContactsWithTier >= tier.min) bestVolumeIndex = tier.index;
                         }
-                        
-                        // Recalculate with best tier
                         scenario2VolumeIndex = bestVolumeIndex;
-                        scenario2Contacts = 0;
-                        scenario2Price = 0;
+                        scenario2Contacts = 0; scenario2Price = 0;
                         results.forEach(result => {
                             const waveBudget = parseFloat(result.price);
                             const periodIndex = parseFloat(result.periodIndex);
                             const nettoCpm = baseCpm * periodIndex * scenario2VolumeIndex;
-                            const contacts = (waveBudget * 1000) / nettoCpm;
-                            scenario2Contacts += contacts;
+                            scenario2Contacts += (waveBudget * 1000) / nettoCpm;
                             scenario2Price += waveBudget;
                         });
                     } else {
-                        // For contacts mode: just recalculate price with merged index
                         results.forEach(result => {
-                            const contacts = result.contacts;
                             const periodIndex = parseFloat(result.periodIndex);
                             const nettoCpm = baseCpm * periodIndex * scenario2VolumeIndex;
-                            scenario2Price += (contacts * nettoCpm) / 1000;
+                            scenario2Price += (result.contacts * nettoCpm) / 1000;
                         });
                     }
                 } else {
-                    scenario2Price = currentPrice;
+                    scenario2Price = totalBudget;
                 }
-                
-                // SCENARIO 3: Merged + extra to next tier
+
                 const scenario3Contacts = nextTier ? nextTier.min : scenario2Contacts;
                 const scenario3VolumeIndex = nextTier ? nextTier.index : scenario2VolumeIndex;
                 let scenario3Price = 0;
-                
-                if (nextTier) {
+                const showScenario3Real = showScenario3 && nextTier && scenario3Contacts > Math.max(totalContacts, scenario2Contacts);
+
+                if (showScenario3Real) {
                     results.forEach(result => {
                         const periodIndex = parseFloat(result.periodIndex);
                         const nettoCpm = baseCpm * periodIndex * scenario3VolumeIndex;
-                        // Proportionally distribute the extra contacts
                         const proportion = result.contacts / totalContacts;
-                        const adjustedContacts = scenario3Contacts * proportion;
-                        scenario3Price += (adjustedContacts * nettoCpm) / 1000;
+                        scenario3Price += (scenario3Contacts * proportion * nettoCpm) / 1000;
                     });
                 }
-                
-                const savingsCurrent2 = currentPrice - scenario2Price;
-                const savingsCurrent3 = currentPrice - scenario3Price;
-                const savings2to3 = scenario2Price - scenario3Price;
-                
-                // Get commission and discount from mediabudget calculator
+
+                const savingsCurrent2 = totalBudget - scenario2Price;
+                const savingsCurrent3 = totalBudget - scenario3Price;
+
                 const commissionPercent = parseFloat(document.getElementById('commissionPercent')?.value) || 0;
                 const discountPercent = parseFloat(document.getElementById('discountPercent')?.value) || 0;
                 const hasCommissionDiscount = commissionPercent > 0 || discountPercent > 0;
-                
-                // Function to generate OOP breakdown HTML
+
                 function generateOOPBreakdown(mediabudget) {
                     if (!hasCommissionDiscount) return '';
-                    
                     const afterDiscount = mediabudget * (1 - discountPercent / 100);
                     const discountAmount = mediabudget - afterDiscount;
                     const afterCommission = afterDiscount * (1 - commissionPercent / 100);
                     const commissionAmount = afterDiscount - afterCommission;
                     const oop = afterCommission;
-                    
                     return `
                         <div style="margin-top: 12px; padding-top: 12px; border-top: 2px solid rgba(0,0,0,0.1);">
                             <div style="font-weight: 700; font-size: 12px; color: #718096; margin-bottom: 8px; text-transform: uppercase;">💰 Prijsopbouw</div>
-                            <div class="scenario-stat">
-                                <span class="stat-label">Mediabudget:</span>
-                                <span class="stat-value">€${formatCurrency(mediabudget)}</span>
-                            </div>
-                            ${discountPercent > 0 ? `
-                            <div class="scenario-stat">
-                                <span class="stat-label">− Korting (${discountPercent}%):</span>
-                                <span class="stat-value" style="color: #10b981;">−€${formatCurrency(discountAmount)}</span>
-                            </div>
-                            ` : ''}
-                            ${commissionPercent > 0 ? `
-                            <div class="scenario-stat">
-                                <span class="stat-label">− Commissie (${commissionPercent}%):</span>
-                                <span class="stat-value" style="color: #10b981;">−€${formatCurrency(commissionAmount)}</span>
-                            </div>
-                            ` : ''}
+                            <div class="scenario-stat"><span class="stat-label">Mediabudget:</span><span class="stat-value">€${formatCurrency(mediabudget)}</span></div>
+                            ${discountPercent > 0 ? `<div class="scenario-stat"><span class="stat-label">− Korting (${discountPercent}%):</span><span class="stat-value" style="color: #10b981;">−€${formatCurrency(discountAmount)}</span></div>` : ''}
+                            ${commissionPercent > 0 ? `<div class="scenario-stat"><span class="stat-label">− Commissie (${commissionPercent}%):</span><span class="stat-value" style="color: #10b981;">−€${formatCurrency(commissionAmount)}</span></div>` : ''}
                             <div class="scenario-stat" style="margin-top: 8px; padding-top: 8px; border-top: 2px solid rgba(0,0,0,0.1);">
                                 <span class="stat-label" style="font-weight: 800;">= OOP (Te betalen):</span>
                                 <span class="stat-value" style="color: #e30613; font-weight: 900;">€${formatCurrency(oop)}</span>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 }
-                
-                html += `
-                    <div class="suggestion-box">
-                        <div class="suggestion-title">🎯 Volumekorting Optimalisatie</div>
-                        <div class="suggestion-content">
-                            <div class="scenario-grid">`;
-                
-                // Only show Scenario 2 if toggle OFF and 2+ waves
+
+                html += `<div class="suggestion-box"><div class="suggestion-title">🎯 Volumekorting Optimalisatie</div><div class="suggestion-content"><div class="scenario-grid">`;
+
                 if (showScenario2) {
                     html += `
                         <div class="scenario-card ${savingsCurrent2 > 0 ? 'better' : ''}">
-                            <div class="scenario-header">
-                                <div class="scenario-number">1</div>
-                                <div class="scenario-name">Waves Samengevoegd</div>
-                            </div>
+                            <div class="scenario-header"><div class="scenario-number">1</div><div class="scenario-name">Waves Samengevoegd</div></div>
                             <div class="scenario-stats">
-                                <div class="scenario-stat">
-                                    <span class="stat-label">Contacten:</span>
-                                    <span class="stat-value">${Math.round(scenario2Contacts).toLocaleString('nl-BE')}</span>
-                                </div>
-                                <div class="scenario-stat">
-                                    <span class="stat-label">Volume-index:</span>
-                                    <span class="stat-value highlight">${scenario2VolumeIndex.toFixed(2)}</span>
-                                </div>
-                                <div class="scenario-stat">
-                                    <span class="stat-label">Avg. Netto CPM:</span>
-                                    <span class="stat-value highlight">€${formatCurrency((scenario2Price / scenario2Contacts) * 1000)}</span>
-                                </div>
-                                <div class="scenario-stat total">
-                                    <span class="stat-label">Totaalprijs:</span>
-                                    <span class="stat-value">€${formatCurrency(scenario2Price)}</span>
-                                </div>
+                                <div class="scenario-stat"><span class="stat-label">Contacten:</span><span class="stat-value">${Math.round(scenario2Contacts).toLocaleString('nl-BE')}</span></div>
+                                <div class="scenario-stat"><span class="stat-label">Volume-index:</span><span class="stat-value highlight">${scenario2VolumeIndex.toFixed(2)}</span></div>
+                                <div class="scenario-stat"><span class="stat-label">Avg. Netto CPM:</span><span class="stat-value highlight">€${formatCurrency((scenario2Price / scenario2Contacts) * 1000)}</span></div>
+                                <div class="scenario-stat total"><span class="stat-label">Totaalprijs:</span><span class="stat-value">€${formatCurrency(scenario2Price)}</span></div>
                                 ${generateOOPBreakdown(scenario2Price)}
-                                ${savingsCurrent2 > 0 ? `
-                                    <div class="scenario-saving">💰 -€${formatCurrency(savingsCurrent2)}</div>
-                                ` : ''}
+                                ${savingsCurrent2 > 0 ? `<div class="scenario-saving">💰 -€${formatCurrency(savingsCurrent2)}</div>` : ''}
                             </div>
                             ${savingsCurrent2 > 0 ? '<div class="scenario-badge better-badge">Goedkoper!</div>' : ''}
                         </div>`;
                 }
-                
-                // Only show Scenario 3 if there's a next tier
-                if (showScenario3) {
+
+                if (showScenario3Real) {
                     html += `
                         <div class="scenario-card ${savingsCurrent3 > 0 ? 'best' : 'neutral'}">
-                            <div class="scenario-header">
-                                <div class="scenario-number">${showScenario2 ? '2' : '1'}</div>
-                                <div class="scenario-name">${showScenario2 ? 'Samengevoegd + Extra' : 'Extra Contacten Kopen'}</div>
-                            </div>
+                            <div class="scenario-header"><div class="scenario-number">${showScenario2 ? '2' : '1'}</div><div class="scenario-name">${showScenario2 ? 'Samengevoegd + Extra' : 'Extra Contacten Kopen'}</div></div>
                             <div class="scenario-stats">
-                                <div class="scenario-stat">
-                                    <span class="stat-label">Contacten:</span>
-                                    <span class="stat-value highlight">${Math.round(scenario3Contacts).toLocaleString('nl-BE')}</span>
-                                </div>
-                                <div class="scenario-stat">
-                                    <span class="stat-label">Volume-index:</span>
-                                    <span class="stat-value highlight">${scenario3VolumeIndex.toFixed(2)}</span>
-                                </div>
-                                <div class="scenario-stat">
-                                    <span class="stat-label">Avg. Netto CPM:</span>
-                                    <span class="stat-value highlight">€${formatCurrency((scenario3Price / scenario3Contacts) * 1000)}</span>
-                                </div>
-                                <div class="scenario-stat total">
-                                    <span class="stat-label">Totaalprijs:</span>
-                                    <span class="stat-value">€${formatCurrency(scenario3Price)}</span>
-                                </div>
+                                <div class="scenario-stat"><span class="stat-label">Contacten:</span><span class="stat-value highlight">${Math.round(scenario3Contacts).toLocaleString('nl-BE')}</span></div>
+                                <div class="scenario-stat"><span class="stat-label">Volume-index:</span><span class="stat-value highlight">${scenario3VolumeIndex.toFixed(2)}</span></div>
+                                <div class="scenario-stat"><span class="stat-label">Avg. Netto CPM:</span><span class="stat-value highlight">€${formatCurrency((scenario3Price / scenario3Contacts) * 1000)}</span></div>
+                                <div class="scenario-stat total"><span class="stat-label">Totaalprijs:</span><span class="stat-value">€${formatCurrency(scenario3Price)}</span></div>
                                 ${generateOOPBreakdown(scenario3Price)}
-                                ${savingsCurrent3 > 0 ? `
-                                    <div class="scenario-saving best">🎉 -€${formatCurrency(savingsCurrent3)}</div>
-                                ` : ''}
+                                ${savingsCurrent3 > 0 ? `<div class="scenario-saving best">🎉 -€${formatCurrency(savingsCurrent3)}</div>` : ''}
                             </div>
                             ${savingsCurrent3 > 0 ? '<div class="scenario-badge best-badge">Beste Deal! ⭐</div>' : ''}
                         </div>`;
                 }
-                
-                html += `
-                            </div>`;
-                
-                // Recommendation
-                if (showScenario2 && savingsCurrent2 > 0 && showScenario3 && savings2to3 > 0) {
-                    html += `
-                        <div class="scenario-recommendation">
-                            <strong>💡 Aanbeveling:</strong> 
-                            Zet de toggle "Volume-index berekenen op som" <strong>AAN</strong> 
-                            en koop <strong>${(scenario3Contacts - totalContacts).toLocaleString('nl-BE')}</strong> extra contacten 
-                            voor de beste prijs!
-                            <br><span class="saving-highlight">Totale besparing: €${formatCurrency(savingsCurrent3)}</span>
-                        </div>`;
+
+                html += `</div>`;
+
+                if (showScenario2 && savingsCurrent2 > 0 && showScenario3Real && (totalBudget - scenario3Price) > 0) {
+                    html += `<div class="scenario-recommendation"><strong>💡 Aanbeveling:</strong> Zet de toggle "Volume-index berekenen op som" <strong>AAN</strong> en koop <strong>${(scenario3Contacts - totalContacts).toLocaleString('nl-BE')}</strong> extra contacten voor de beste prijs!<br><span class="saving-highlight">Totale besparing: €${formatCurrency(savingsCurrent3)}</span></div>`;
                 } else if (showScenario2 && savingsCurrent2 > 0) {
-                    html += `
-                        <div class="scenario-recommendation">
-                            <strong>💡 Aanbeveling:</strong> 
-                            Zet de toggle "Volume-index berekenen op som" <strong>AAN</strong> voor een betere prijs!
-                            <br><span class="saving-highlight">Besparing: €${formatCurrency(savingsCurrent2)}</span>
-                        </div>`;
-                } else if (showScenario3 && savingsCurrent3 > 0) {
-                    html += `
-                        <div class="scenario-recommendation">
-                            <strong>💡 Aanbeveling:</strong> 
-                            Koop <strong>${(scenario3Contacts - totalContacts).toLocaleString('nl-BE')}</strong> extra contacten 
-                            om in de volgende volumeschijf te komen!
-                            <br><span class="saving-highlight">Besparing: €${formatCurrency(savingsCurrent3)}</span>
-                        </div>`;
+                    html += `<div class="scenario-recommendation"><strong>💡 Aanbeveling:</strong> Zet de toggle "Volume-index berekenen op som" <strong>AAN</strong> voor een betere prijs!<br><span class="saving-highlight">Besparing: €${formatCurrency(savingsCurrent2)}</span></div>`;
+                } else if (showScenario3Real && savingsCurrent3 > 0) {
+                    html += `<div class="scenario-recommendation"><strong>💡 Aanbeveling:</strong> Koop <strong>${(scenario3Contacts - totalContacts).toLocaleString('nl-BE')}</strong> extra contacten om in de volgende volumeschijf te komen!<br><span class="saving-highlight">Besparing: €${formatCurrency(savingsCurrent3)}</span></div>`;
                 }
-                
-                html += `
-                        </div>
-                    </div>`;
+
+                html += `</div></div>`;
             }
 
             resultsContent.innerHTML = html;
@@ -2005,23 +1702,13 @@
         }
 
         async function logToGoogleSheets(data) {
-            // Google Sheets Web App URL
             const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyaMH7UKAdv3FYR_SD83iVgTvxWWDHqH6NXUOWW2iyy38O9GbiGXvonG4F-hPqSYE3x/exec';
-            
             try {
-                const response = await fetch(GOOGLE_SHEETS_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        timestamp: new Date().toISOString(),
-                        ...data
-                    })
+                await fetch(GOOGLE_SHEETS_URL, {
+                    method: 'POST', mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ timestamp: new Date().toISOString(), ...data })
                 });
-                
-                console.log('Data logged to Google Sheets');
             } catch (error) {
                 console.error('Error logging to Google Sheets:', error);
             }
